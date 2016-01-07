@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<block>
+  <name>llsr_mac</name>
+  <key>llsr_llsr_mac</key>
+  <category>llsr</category>
+  <import>import llsr</import>
+  <make>llsr.llsr_mac(
+      $addr,
+      $timeout,
+      $maximum_attempts,
+      $broadcast_interval,
+      $exp_backoff,
+      $backoff_randomness,
+      node_expiry_delay=$node_expiry_delay
+                     )
+  </make>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <param>
+    <name>Local addr</name>
+    <key>addr</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Max ARQ attempts</name>
+    <key>maximum_attempts</key>
+    <value>5</value>
+    <type>int</type>
+  </param>
+  <param>
+    <name>ARQ timeout</name>
+    <key>timeout</key>
+    <value>0.01</value>
+    <type>real</type>
+  </param>
+  <param>
+    <name>Broadcast interval</name>
+    <key>broadcast_interval</key>
+    <value>2.0</value>
+    <type>real</type>
+  </param>
+  <param>
+  <name>Backoff</name>
+    <key>exp_backoff</key>
+    <value>True</value>
+    <type>enum</type>
+    <option>
+      <name>Exponential</name>
+      <key>True</key>
+    </option>
+    <option>
+      <name>Linear</name>
+      <key>False</key>
+      </option>
+  </param>
+	<param>
+        <name>Backoff randomness</name>
+        <key>backoff_randomness</key>
+		<value>0.05</value>
+        <type>real</type>
+  </param>
+  <param>
+    <name>Node expiry delay</name>
+    <key>node_expiry_delay</key>
+    <value>10.0</value>
+    <type>real</type>
+  </param>
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <sink>
+    <name>from_radio</name>
+    <type>message</type>
+    <optional>1</optional>
+  </sink>
+  <sink>
+    <name>from_app</name>
+    <type>message</type>
+    <optional>1</optional>
+  </sink>
+  <sink>
+    <name>from_app_arq</name>
+    <type>message</type>
+    <optional>1</optional>
+  </sink>
+  <sink>
+    <name>ctrl_in</name>
+    <type>message</type>
+    <optional>1</optional>
+  </sink>
+
+  <!-- Make one 'source' node per output. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+  <source>
+    <name>to_radio</name>
+    <type>message</type>
+    <optional>1</optional>
+  </source>
+  <source>
+    <name>to_app</name>
+    <type>message</type>
+    <optional>1</optional>
+  </source>
+  <source>
+    <name>ctrl_out</name>
+    <type>message</type>
+  <optional>1</optional>
+  </source>
+  <doc>
+The module implements the Location-free Link State Routing (LLSR) protocol originally described in: Michel Barbeau, Stephane Blouin, Gimer Cervera, Joaquin Garcia-Alfaro and Evangelos Kranakis, "Location-free Link State Routing for Underwater Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS, Canada. 
+  </doc>
+
+</block>
