@@ -11,11 +11,8 @@ Canada.
 Installing
 
 git clone https://github.com/michelbarbeau/gr-llsr
-
 cd gr-llsr/build 
-
 make
-
 sudo make install
 
 To run within gnuradio-companion
