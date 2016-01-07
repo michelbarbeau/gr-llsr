@@ -12,7 +12,13 @@ Installing
 
 git clone https://github.com/michelbarbeau/gr-llsr
 
+cd gr-llsr
+
+make build
+
 cd gr-llsr/build 
+
+cmake ../
 
 make
 

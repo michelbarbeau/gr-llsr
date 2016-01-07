@@ -1,4 +1,0 @@
-/home/barbeau/gr-llsr/build/apps/CMakeFiles/pygen_apps_9a6dd.dir
-/home/barbeau/gr-llsr/build/CMakeFiles/uninstall.dir
-/home/barbeau/gr-llsr/build/python/CMakeFiles/pygen_python_be46c.dir
-/home/barbeau/gr-llsr/build/docs/doxygen/CMakeFiles/doxygen_target.dir
