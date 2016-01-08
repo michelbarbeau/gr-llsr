@@ -16,7 +16,7 @@ cd gr-llsr
 
 make build
 
-cd gr-llsr/build 
+cd build 
 
 cmake ../
 
