@@ -1,5 +1,4 @@
-Location-free Link State Routing (LLSR) Implementation for GNU Radio
---------------------------------------------------------------------
+# Location-free Link State Routing (LLSR) Implementation for GNU Radio
 
 The module implements the protocol originally described in:
 Michel Barbeau, Stephane Blouin, Gimer Cervera, Joaquin Garcia-Alfaro
@@ -8,11 +7,14 @@ Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on
 Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS, 
 Canada. 
 
-Installing
+## Installing 
 
-git clone https://github.com/michelbarbeau/gr-llsr
+`git clone https://github.com/michelbarbeau/gr-llsr`
 
-cd gr-llsr
+## Building
+
+
+```cd gr-llsr
 
 make build
 
@@ -23,6 +25,10 @@ cmake ../
 make
 
 sudo make install
+
+```
+
+## Running
 
 To run within gnuradio-companion
 
