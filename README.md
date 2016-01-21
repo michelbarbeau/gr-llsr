@@ -14,7 +14,8 @@ Canada.
 ## Building
 
 
-```cd gr-llsr
+```
+cd gr-llsr
 
 make build
 
