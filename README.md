@@ -34,3 +34,9 @@ sudo make install
 To run within gnuradio-companion
 
 Open the flow graph  gr-llsr/examples/loopback.grc
+
+To run outside gnuradio-companion
+
+cd gr-llsr/examples
+
+python top_block.py

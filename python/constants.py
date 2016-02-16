@@ -5,7 +5,7 @@
 # Location-free Link State Routing
 # --------------------------------
 # Author: Michel Barbeau, Carleton University
-# Version: January 1, 2016
+# Version: January 21, 2016
 # Re-using:
 #
 #  File: constants.py
@@ -28,8 +28,6 @@
 #  MA 02110-1301, USA.
 #  
 #  
-
-CHAN_FLAG_NONE = 0x00
 
 # Data/acknowledgement packet  definition
 PKT_PROT_ID = 0

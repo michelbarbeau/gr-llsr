@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <block>
-  <name>llsr_mac</name>
+  <name>LLSR MAC</name>
   <key>llsr_llsr_mac</key>
   <category>llsr</category>
   <import>import llsr</import>
@@ -11,8 +11,10 @@
       $broadcast_interval,
       $exp_backoff,
       $backoff_randomness,
-      node_expiry_delay=$node_expiry_delay
-                     )
+      $node_expiry_delay,
+      $max_queue_size,
+      $errors_to_file,
+      $data_to_file)
   </make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
@@ -20,7 +22,7 @@
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
   <param>
-    <name>Local addr</name>
+    <name>Address</name>
     <key>addr</key>
     <type>int</type>
   </param>
@@ -56,17 +58,51 @@
       <key>False</key>
       </option>
   </param>
-	<param>
-        <name>Backoff randomness</name>
-        <key>backoff_randomness</key>
-		<value>0.05</value>
-        <type>real</type>
+  <param>
+    <name>Backoff randomness</name>
+    <key>backoff_randomness</key>
+    <value>0.05</value>
+    <type>real</type>
   </param>
   <param>
     <name>Node expiry delay</name>
     <key>node_expiry_delay</key>
     <value>10.0</value>
     <type>real</type>
+  </param>
+  <param>
+    <name>Max Queue Size</name>
+    <key>max_queue_size</key>
+    <value>10</value>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Errors to file</name>
+    <key>errors_to_file</key>
+    <value>False</value>
+    <type>enum</type>
+    <option>
+      <name>True</name>
+      <key>True</key>
+    </option>
+    <option>
+      <name>False</name>
+      <key>False</key>
+    </option>
+  </param>
+  <param>
+    <name>Data to file</name>
+    <key>data_to_file</key>
+    <value>False</value>
+    <type>enum</type>
+    <option>
+      <name>True</name>
+      <key>True</key>
+    </option>
+    <option>
+      <name>False</name>
+      <key>False</key>
+    </option>
   </param>
   <!-- Make one 'sink' node per input. Sub-nodes:
        * name (an identifier for the GUI)

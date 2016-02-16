@@ -151,7 +151,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(544, 387)</value>
+      <value>(544, 395)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -175,7 +175,7 @@
     </param>
     <param>
       <key>period</key>
-      <value>1</value>
+      <value>10000</value>
     </param>
   </block>
   <block>
@@ -198,54 +198,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1040, 43)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_message_strobe_1</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>msg</key>
-      <value>pmt.intern("TEST")</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>period</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_message_strobe</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(344, 307)</value>
+      <value>(336, 307)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -269,7 +222,54 @@
     </param>
     <param>
       <key>period</key>
-      <value>10000</value>
+      <value>20000</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_message_strobe</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1032, 83)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_message_strobe_3</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>msg</key>
+      <value>pmt.intern("TEST")</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>period</key>
+      <value>1000</value>
     </param>
   </block>
   <block>
@@ -296,7 +296,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(528, 291)</value>
+      <value>(528, 299)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -334,6 +334,10 @@
       <value>0.01</value>
     </param>
     <param>
+      <key>addr</key>
+      <value>1</value>
+    </param>
+    <param>
       <key>backoff_randomness</key>
       <value>0.05</value>
     </param>
@@ -358,8 +362,16 @@
       <value></value>
     </param>
     <param>
+      <key>data_to_file</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>_enabled</key>
       <value>True</value>
+    </param>
+    <param>
+      <key>errors_to_file</key>
+      <value>False</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -374,16 +386,16 @@
       <value>llsr_llsr_mac_0</value>
     </param>
     <param>
-      <key>addr</key>
-      <value>1</value>
-    </param>
-    <param>
       <key>maximum_attempts</key>
       <value>5</value>
     </param>
     <param>
       <key>maxoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>max_queue_size</key>
+      <value>10</value>
     </param>
     <param>
       <key>minoutbuf</key>
@@ -401,6 +413,10 @@
       <value>0.01</value>
     </param>
     <param>
+      <key>addr</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>backoff_randomness</key>
       <value>0.05</value>
     </param>
@@ -425,8 +441,16 @@
       <value></value>
     </param>
     <param>
+      <key>data_to_file</key>
+      <value>True</value>
+    </param>
+    <param>
       <key>_enabled</key>
       <value>True</value>
+    </param>
+    <param>
+      <key>errors_to_file</key>
+      <value>False</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -441,16 +465,16 @@
       <value>llsr_llsr_mac_1</value>
     </param>
     <param>
-      <key>addr</key>
-      <value>0</value>
-    </param>
-    <param>
       <key>maximum_attempts</key>
       <value>5</value>
     </param>
     <param>
       <key>maxoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>max_queue_size</key>
+      <value>10</value>
     </param>
     <param>
       <key>minoutbuf</key>
@@ -468,22 +492,22 @@
     <sink_key>ctrl_in</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_message_strobe_1</source_block_id>
-    <sink_block_id>llsr_llsr_mac_1</sink_block_id>
-    <source_key>strobe</source_key>
-    <sink_key>ctrl_in</sink_key>
-  </connection>
-  <connection>
     <source_block_id>blocks_message_strobe_2</source_block_id>
     <sink_block_id>blocks_random_pdu_0</sink_block_id>
     <source_key>strobe</source_key>
     <sink_key>generate</sink_key>
   </connection>
   <connection>
+    <source_block_id>blocks_message_strobe_3</source_block_id>
+    <sink_block_id>llsr_llsr_mac_1</sink_block_id>
+    <source_key>strobe</source_key>
+    <sink_key>ctrl_in</sink_key>
+  </connection>
+  <connection>
     <source_block_id>blocks_random_pdu_0</source_block_id>
     <sink_block_id>llsr_llsr_mac_0</sink_block_id>
     <source_key>pdus</source_key>
-    <sink_key>from_app</sink_key>
+    <sink_key>from_app_arq</sink_key>
   </connection>
   <connection>
     <source_block_id>llsr_llsr_mac_0</source_block_id>
