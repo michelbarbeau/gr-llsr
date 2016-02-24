@@ -18,5 +18,6 @@
 # Boston, MA 02110-1301, USA.
 
 install(FILES
-    llsr_llsr_mac.xml DESTINATION share/gnuradio/grc/blocks
+    llsr_llsr_mac.xml
+    llsr_framer_pb.xml DESTINATION share/gnuradio/grc/blocks
 )

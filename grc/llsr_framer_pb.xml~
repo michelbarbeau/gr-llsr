@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<block>
+  <name>Framer</name>
+  <key>llsr_framer_pb</key>
+  <category>llsr</category>
+  <import>import llsr</import>
+  <make>llsr.framer_pb($frame_tag_name, $tx_delay)</make>
+  <param>
+    <name>Frame_tag_name</name>
+    <key>frame_tag_name</key>
+    <value>"anonymous"</value>
+    <type>string</type>
+  </param>
+  <param>
+    <name>TX Delay</name>
+    <key>tx_delay</key>
+    <value>8</value>
+    <type>int</type>
+  </param>
+  <sink>
+    <name>in</name>
+    <type>message</type>
+  </sink>
+  <source>
+    <name>out</name>
+    <type>byte</type>
+  </source>
+</block>
