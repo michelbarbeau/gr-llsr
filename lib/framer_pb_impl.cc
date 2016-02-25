@@ -4,7 +4,7 @@
  * Framer for Hydro Acoustic Communications
  * ---------------------------------------- 
  * Copyright 2016 Michel Barbeau, Carleton University.
- * Version: February 23, 2016
+ * Version: February 24, 2016
  *
  * Using file: hdlc_framer_pb from module digital
  * 
@@ -57,17 +57,23 @@ namespace gr {
         std::stringstream str;
         str << name() << unique_id();
         d_me = pmt::string_to_symbol(str.str());
-        // initialize the preamble of the framer
-        clog << "in Framer: TX Delay is: " << tx_delay << endl;
-        sframing_l=tx_delay+8;
-        clog << "in Framer: preamble size is: " << sframing_l << endl;
-        sframing=new unsigned char[sframing_l];
+        // --- construction of frame preamble
+        clog << "in Framer: preamble size is: " << tx_delay+8 << endl;
+        unsigned char * sframing=new unsigned char[tx_delay+8];
         for(int i=0; i<tx_delay; i++)
-            sframing[i]=0;
-        char flag[] = {0,1,1,1,1,1,1,0};
+            sframing[i]=0; 
+        const unsigned char flag[]={0,1,1,1,1,1,1,0}; // standard HDLC flag 
         for(int i=0; i<8; i++)
             sframing[tx_delay+i]=flag[i];
-
+        sframing_vec=std::vector<unsigned char>(sframing, sframing+tx_delay+8);
+        // debugging code
+        //cout << hex;
+        //for (std::vector<unsigned char>::const_iterator i=sframing_vec.begin(); 
+        //    i!=sframing_vec.end(); ++i)
+        //    cout << (int)(*i) << ' ';
+        //cout << endl;
+        // --- construction of frame postamble
+        eframing_vec=std::vector<unsigned char>(flag, flag+sizeof(flag));
     }
 
     /*
@@ -169,15 +175,10 @@ namespace gr {
         //bitstuff
         stuff(pkt_bits);
 
-        //add framing
-        std::vector<unsigned char> sframing_vec(sframing, sframing+sframing_l);
+        // add frame preamble
         pkt_bits.insert(pkt_bits.begin(), sframing_vec.begin(), sframing_vec.end());
-
-        const unsigned char framing[] = {0,1,1,1,1,1,1,0};
-        std::vector<unsigned char> framing_vec(framing, framing+sizeof(framing));
-        // MB 21022016 - next line commented
-        //pkt_bits.insert(pkt_bits.begin(), framing_vec.begin(), framing_vec.end());
-        pkt_bits.insert(pkt_bits.end(), framing_vec.begin(), framing_vec.end());
+        // add frame postamble
+        pkt_bits.insert(pkt_bits.end(), eframing_vec.begin(), eframing_vec.end());
 
         //make sure we have the space. unfortunately, we didn't know
         //until now, since the stuffing must be calculated. we'll just

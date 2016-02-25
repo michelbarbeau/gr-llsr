@@ -4,7 +4,7 @@
  * Framer for Hydro Acoustic Communications
  * ----------------------------------------
  * Copyright 2016 Michel Barbeau, Carleton University.
- * Version: February 23, 2016
+ * Version: February 24, 2016
  *
  * Using file: hdlc_framer_pb from module digital
  * 
@@ -41,8 +41,10 @@ namespace gr {
         unsigned int crc_ccitt(std::vector<unsigned char> &data);
         std::vector<unsigned char> unpack(std::vector<unsigned char> &pkt);
         void stuff(std::vector<unsigned char> &pkt);
-        unsigned char * sframing; // preamble
-        int sframing_l; // length of sframing
+        // --- frame preamble
+        std::vector<unsigned char> sframing_vec;
+        // --- frame postamble
+        std::vector<unsigned char> eframing_vec;
 
      public:
       framer_pb_impl(const std::string frame_tag_name, int tx_delay);
