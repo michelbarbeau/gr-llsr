@@ -34,11 +34,26 @@ PKT_PROT_ID = 0
 PKT_SRC = 1
 PKT_DEST = 2
 PKT_CNT = 3
+PROTO_ACK = 4
 PKT_CTRL = 4
-PKT_MIN = 5 # packet minimum length
-ACK_PKT_LENGTH = 4 # packet length
 
-# Beacon packet defnition
+PKT_MIN = 5 # packet minimum length
+MGMT_MIN = 3 # packet minimum lenghth
+MGMT_ACK_MIN = 4
+ACK_PKT_LENGTH = 5 # packet length
+MGMT_PKT_LENGTH = 8 # MGMT packet length
+MGMT_ACK_LENGTH = 6 # MGMT ACK packet length
+# MGMT packet definition
+MGMT_TRACK = 2
+MGMT_VAL = 3
+MGMT_DEST = 4
+MGMT_OPT = 5
+MGMT_OID = 6
+MGMT_HASH = 7
+# MGMT ACK packet definition
+MGMT_ACK_TRACK=4
+MGMT_ACK_VAL=5
+# Beacon packet definition
 # PKT_INDEX_PROT_ID = 0
 # PKT_INDEX_SRC = 1
 PKT_HC = 2 # hop count
@@ -49,7 +64,8 @@ BEACON_PKT_LENGTH = 4 # packet length
 ARQ_PROTO = 0 # unicast acknowledgement packet
 DATA_PROTO = 1 # unicast user data packet
 BEACON_PROTO = 2 # beacon protocol
-
+MGMT_PROTO = 3 # management protocol
+MGMT_ACK_PROTO = 4 # management ack protocol
 # sink address
 SINK_ADDR = 0
 # undefined address

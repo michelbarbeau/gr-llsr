@@ -124,6 +124,11 @@
     <type>message</type>
     <optional>1</optional>
   </sink>
+   <sink>
+    <name>from_mgmt_app</name>
+    <type>message</type>
+    <optional>1</optional>
+  </sink>
   <sink>
     <name>ctrl_in</name>
     <type>message</type>
@@ -142,6 +147,11 @@
   </source>
   <source>
     <name>to_app</name>
+    <type>message</type>
+    <optional>1</optional>
+  </source>
+  <source>
+    <name>to_mgmt_app</name>
     <type>message</type>
     <optional>1</optional>
   </source>
