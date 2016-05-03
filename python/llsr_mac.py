@@ -163,6 +163,8 @@ class llsr_mac(gr.basic_block):
         self.max_queue_size=max_queue_size
 	#pkt type using fsm (0 data, 1 mgmt, 2 mgmt ack)
 	self.pkttype=-1 # default
+	# secret key
+	self.secretkey="12345"
         # routing state
         # -------------------------------------------------
         # sink node?
@@ -227,7 +229,7 @@ class llsr_mac(gr.basic_block):
             for k in self.nodes.keys():
                 if self.nodes[k].hc==min:
                    min_nodes.append(k)
-            # get the maximum path quality
+            # get the maximum path qualityself.secretky
             max=0 # init with the min value
             for k in min_nodes:
                 if self.nodes[k].pq>max:
@@ -625,14 +627,8 @@ class llsr_mac(gr.basic_block):
                     # last mgmt packet number and new mgmt packet number different?
 	       	    new_packet=self.nodes[data[PKT_SRC]].lmn!=data[MGMT_TRACK]
                     self.nodes[data[PKT_SRC]].setLmn(data[MGMT_TRACK])
-	    # check hash
-	    if self.checkhash(data[0:MGMT_PKT_LENGTH-1], data[MGMT_HASH])==False:
-	        if self.debug_stderr: 
-		   sys.stderr.write("%d: MGMT TRACK: %d, Hash Wrong and Original Hash: %d,Hash Get: %d \n" % \
-		   (self.addr,data[MGMT_TRACK],data[MGMT_HASH],self.addhash(data[0:MGMT_PKT_LENGTH-1])))
-	        return
 	    # check if the packet is a old packet 
-	    if self.mgmt_track-1==data[MGMT_TRACK]:
+	    if self.mgmt_track>data[MGMT_TRACK]:
 	       if self.debug_stderr: 
 		      sys.stderr.write("%d: Receive former mgmt packet, drop" % self.addr)
 	       return
@@ -641,13 +637,28 @@ class llsr_mac(gr.basic_block):
             if new_packet: 
                 # this node is the destination
                 if self.addr==data[MGMT_DEST]:
+		    # check hash
+	   	    if self.checkhash(data[3:MGMT_PKT_LENGTH-1], data[MGMT_HASH])==False:
+	              if self.debug_stderr: 
+		         sys.stderr.write("%d: MGMT TRACK:Hash Wrong\n" % self.addr)
+	              return
                     # yes! processing
                     message=self.agent(data[MGMT_OPT],data[MGMT_OID],data[MGMT_VAL])
-		    sys.stderr.write("mgmt message: %d\n" % message) 
-		    self._mgmt_ack_rx(self.mgmt_ack_pdu(data[MGMT_TRACk],message))               
+		    sys.stderr.write("mgmt message: %d\n" % message)
+		    messageset="sn"
+                    if message=="s":
+		       errorflag=1
+		       code=0	    
+		    elif message=="n":
+		       errorflag=1
+		       code=1
+		    if not message in messageset:
+		      self._mgmt_ack_rx(self.mgmt_ack_pdu(0, data[MGMT_TRACk], message))  
+		    else:
+		      self._mgmt_ack_rx(self.mgmt_ack_pdu(errorflag, data[MGMT_TRACk], code))               
 		# else, if the packet is new broadcast
                 elif self.mgmt_track==data[MGMT_TRACK]:	 			    
-               	     self._mgmt_rx(self.pdupacker(data[MGMT_MIN:MGMT_PKT_LENGTH-1]))
+               	     self._mgmt_rx(self.pdupacker(data[MGMT_MIN:MGMT_PKT_LENGTH]))
             return
 	# ----------------------
         # mgmt ack packet processing
@@ -841,8 +852,33 @@ class llsr_mac(gr.basic_block):
         # IDLE state
         # ----------
         if self.CHANNEL_state==CHANNEL_IDLE: 
-            # A mgmt packet queued for transmission?
-	   if not self.mgmt_queue.empty(): 
+           # A data packet queued for transmission?
+           if not self.mgmt_ack_queue.empty(): 
+                # get the packet
+                self.arq_pdu_tuple=self.mgmt_ack_queue.get()
+                # save the current packet number 
+                self.expected_ack=self.pkt_cnt 
+                if self.debug_stderr: 
+                   sys.stderr.write("%d:in run_fsm(): sending management ack packet %d\n" % \
+                   (self.addr,self.pkt_cnt))
+                # record packet type
+		self.pkttype=2
+		# transmitting the data packet
+                self.mgmt_ack_tx(self.arq_pdu_tuple)
+		if self.debug_stderr:
+		   sys.stderr.write("pkttype:%d\n" % self.pkttype)
+                # save the transmission time
+                self.time_of_tx=time.time() 
+                # transition to the busy state
+                self.CHANNEL_state=CHANNEL_BUSY
+                # update the transmitted packet count
+                self.arq_pkts_txed+=1
+                # reset the retry count
+                self.retries=0
+                # determine the new backoff percentage
+                self.next_random_backoff_percentage = self.backoff_randomness * random.random()
+           # A mgmt packet queued for transmission?
+	   elif not self.mgmt_queue.empty(): 
 	        self.arq_pdu_tuple=self.mgmt_queue.get()
 		self.mgmt_expected_ack=self.mgmt_track
 	        if self.debug_stderr:
@@ -904,14 +940,18 @@ class llsr_mac(gr.basic_block):
                     if self.debug_stderr: 
                         sys.stderr.write("%d: in run_fsm(): ARQ failed after %d attempts\n" % \
                         (self.addr, self.retries))
-		    if self.addr!=SINK_ADDR and self.pkttype==1:
-			if self.debug_stderr:sys.stderr.write("%d: No arq pkt receive, this node is the bottom and mgmt_pkt not reach the dest\n" % self.addr)
                     # reset the retry count
                     self.retries=0
                     # transition to the idle state
                     self.CHANNEL_state=CHANNEL_IDLE
                     # update the failed transmitted packet count
                     self.failed_arq+=1 
+		    if self.addr!=SINK_ADDR and self.pkttype==1:
+			ackpdutuple=self.mgmt_ack_pdu(1, self.mgmt_track-1, 2)		        
+			self._mgmt_ack_rx(ackpdutuple)
+			if self.debug_stderr:
+			   sys.stderr.write("%d: No arq pkt receive, this node is the bottom and mgmt_pkt not reach the dest\n" % self.addr)
+			   sys.stderr.write("%d: sending error message to sink node\n" % self.addr)		
                 # retry transmission!
                 else:
                     # increment retry count
@@ -927,6 +967,8 @@ class llsr_mac(gr.basic_block):
                        self.tx_arq(self.arq_pdu_tuple, DATA_PROTO)
 		    elif self.pkttype==1:
 		       self.mgmt_retx(self.arq_pdu_tuple)
+		    elif self.pkttype==2:
+		       self.mgmt_ack_tx(self.arq_pdu_tuple)
                     # save the trasnmission time
                     self.time_of_tx=time_now
                     # determine the new backoff percentage
@@ -1020,8 +1062,10 @@ class llsr_mac(gr.basic_block):
         elif not isinstance(payload, list):
             payload = list(payload)
         data += payload
-	# add hash value at the end
-	data += [self.addhash(data)]
+	# if sink add hash
+	if self.addr==SINK_ADDR:
+	  # add hash value at the end
+          data += [self.addhash(data[3:], self.secretkey)]
         # debug mode enabled?
         if self.debug_stderr:
            # yes! log the packet
@@ -1069,10 +1113,10 @@ class llsr_mac(gr.basic_block):
 	      message=self.mib[oid]
 	   elif opt == 1:
 	      self.mib[oid]=value
-	      self.message="s"
+	      self.message= "s"
 	else:
 	# wrong id
-	   self.message="n"   	
+	   self.message= "n"   	
         # return result
         return self.message
     #--------------------------
@@ -1080,9 +1124,10 @@ class llsr_mac(gr.basic_block):
     #--------------------------
 
     #-------add hash-----------	
-    def addhash(self, data):
+    def addhash(self, data, key):
 	#convert list to full string
 	hashstr=" ".join(str(i) for i in data)
+	hashstr+=key
 	# using sha256
 	hashed_value = hashlib.sha256(hashstr)
 	# return a integer hash value
@@ -1090,7 +1135,7 @@ class llsr_mac(gr.basic_block):
 
     #-------check hash---------
     def checkhash(self, data, hashvalue):
-	localmsg=self.addhash(data)
+	localmsg=self.addhash(data, self.secretkey)
 	if localmsg==hashvalue:
 	   return True
 	else:
@@ -1107,7 +1152,6 @@ class llsr_mac(gr.basic_block):
 
     #--------Management ACK PKT UPward Passing--------
     #--MGMT_ACK Passing Format: TRACKNUM|VALUE--
-
     #--------------------
     # mgmt ack arq
     #--------------------
@@ -1129,7 +1173,6 @@ class llsr_mac(gr.basic_block):
 	if not (type(meta_dict) is dict):
 	    meta_dict={}
 	self.dispatch_mgmt_ack_rx(data,meta_dict)
-
     #---------------------
     # mgmt ack dispatch
     #---------------------
@@ -1140,7 +1183,7 @@ class llsr_mac(gr.basic_block):
         self.run_fsm()
 
     #--------------------------------------------
-    # transmit a management data packet
+    # transmit a management ack packet
     #--------------------------------------------
     def mgmt_ack_tx(self, pdu_tuple):
 	if len(self.nodes)>0:
@@ -1165,7 +1208,7 @@ class llsr_mac(gr.basic_block):
                     self.addr) 
             return  
         # yes! data packet header structure
-        data = [MGMT_ACK_PROTO,self.addr,self.next_hop,pkt_cnt]
+        data = [MGMT_ACK_PROTO, self.addr, self.next_hop, pkt_cnt]
 	if self.debug_stderr: 
            sys.stderr.write("%d:in send_mgmt_ack_radio(): packet dropped (packet to self)\n" %
            self.addr) 
@@ -1178,6 +1221,8 @@ class llsr_mac(gr.basic_block):
         elif not isinstance(payload, list):
             payload = list(payload)
         data += payload
+	if self.addr== data[MGMT_ACK_SRC]:
+	   data+=[self.addhash(data[4:], self.secretkey)]
         # debug mode enabled?
         if self.debug_stderr:
            # yes! log the packet
@@ -1195,27 +1240,30 @@ class llsr_mac(gr.basic_block):
     #--------------------------
     # print mgmt_ack pkt
     #--------------------------
-    def print_mgmt_ack_pkt(data):
+    def print_mgmt_ack_pkt(self, pkt):
 	    # invalid mgmt packet length?
 	if len(pkt)!=MGMT_ACK_LENGTH:
 	    # yes!
-	    sys.stderr.write("in print_mgmt_ack_pkt(): mgmt packet invalid length!\n")
+	    sys.stderr.write("in print_mgmt_ack_pkt(): mgmt ack packet invalid length!\n")
 	    return
 	    # no!
 	sys.stderr.write("PROT ID: %d " % pkt[PKT_PROT_ID])
-	sys.stderr.write("PKT FROM: %d " % pkt[PKT_SRC])
-	sys.stderr.write("PKT TO :%d " % pkt[PKT_DEST])
-	sys.stderr.write("PKT CNT :%d " % pkt[PKT_CNT])
-	sys.stderr.write("MGMT TRACK: %d " % pkt[MGMT_TRACK])
-	sys.stderr.write("MESSAGE:"+pkt[MGMT_VAL]+"\n")
+	sys.stderr.write("MGMT ACK PKT FROM: %d " % pkt[PKT_SRC])
+	sys.stderr.write("MGMT ACK PKT TO :%d " % pkt[PKT_DEST])
+	sys.stderr.write("MGMT ACK PKT CNT :%d " % pkt[PKT_CNT])
+	sys.stderr.write("MGMT ACK FLAG: %d " % pkt[MGMT_ACK_FLAG])
+	sys.stderr.write("MGMT ACK SRC: %d " % pkt[MGMT_ACK_SRC])
+	sys.stderr.write("MGMT ACK TRACK: %d " % pkt[MGMT_ACK_TRACK])
+	sys.stderr.write("MGMT ACK VALUE: %d " % pkt[MGMT_ACK_VAL])
+	sys.stderr.write("MGMT ACK HASH: %d " % pkt[MGMT_ACK_HASH]+"\n")
 
     #---------------------------------------
     # generate mgmt_ack pdu
     #---------------------------------------
-    def mgmt_ack_pdu(self, mgmt_track, message):
-        data=[mgmt_track, message]
+    def mgmt_ack_pdu(self, mgmtflag, mgmt_track, message):
+        data=[mgmtflag, self.addr, mgmt_track, message]
         return self.pdupacker(data)
-
+	
     # -----------------------------
     # push data to mgmt application
     # -----------------------------
