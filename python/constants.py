@@ -34,7 +34,9 @@ PKT_PROT_ID = 0
 PKT_SRC = 1
 PKT_DEST = 2
 PKT_CNT = 3
+
 PROTO_ACK = 4
+
 PKT_CTRL = 4
 
 PKT_MIN = 5 # packet minimum length
@@ -42,7 +44,7 @@ MGMT_MIN = 3 # packet minimum lenghth
 MGMT_ACK_MIN = 4
 ACK_PKT_LENGTH = 5 # packet length
 MGMT_PKT_LENGTH = 8 # MGMT packet length
-MGMT_ACK_LENGTH = 6 # MGMT ACK packet length
+MGMT_ACK_LENGTH = 9 # MGMT ACK packet length
 # MGMT packet definition
 MGMT_TRACK = 2
 MGMT_VAL = 3
@@ -51,8 +53,12 @@ MGMT_OPT = 5
 MGMT_OID = 6
 MGMT_HASH = 7
 # MGMT ACK packet definition
-MGMT_ACK_TRACK=4
-MGMT_ACK_VAL=5
+MGMT_ACK_FLAG=4
+MGMT_ACK_SRC=5
+MGMT_ACK_TRACK=6
+MGMT_ACK_VAL=7
+MGMT_ACK_HASH=8
+
 # Beacon packet definition
 # PKT_INDEX_PROT_ID = 0
 # PKT_INDEX_SRC = 1
