@@ -7,9 +7,9 @@ Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on
 Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS, 
 Canada. 
 
-The project includes the following contributions(see gr-llsr/docs):
+The project includes the following contributions (see gr-llsr/docs):
 
-Zach Renaud, "Network Management for Software Defined Radio Applications", Bachelor of Computer Science Honours Project, School of Computer Science, Carleton University, April 2016.
+Zach Renaud, "Network Management for Software Defined Radio Applications", Bachelor of Computer Science Honours Project, School of Computer Science, Carleton University, April 2016. (see the llsr-snmp branch)
 
 Wenqian Wang, "Performance Management of Hydroacoustic Surveillance Networks", Master of Computer Science, Graduate Project, School of Computer Science, Carleton University, May 2016.
 
