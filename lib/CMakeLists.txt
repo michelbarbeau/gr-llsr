@@ -24,10 +24,8 @@ include(GrPlatform) #define LIB_SUFFIX
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
 list(APPEND llsr_sources
-    framer_pb_impl.cc
-)
+    )
 
 set(llsr_sources "${llsr_sources}" PARENT_SCOPE)
 if(NOT llsr_sources)

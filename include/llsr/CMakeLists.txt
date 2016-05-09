@@ -22,5 +22,5 @@
 ########################################################################
 install(FILES
     api.h
-    framer_pb.h DESTINATION include/llsr
+    DESTINATION include/llsr
 )
