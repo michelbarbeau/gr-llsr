@@ -42,6 +42,8 @@ sudo ldconfig
 
 ## Running
 
+![Loopback Example](https://github.com/michelbarbeau/gr-llsr/blob/master/loopback.png)
+
 To run within gnuradio-companion
 
 Open the flow graph  gr-llsr/examples/loopback.grc
@@ -51,3 +53,5 @@ To run outside gnuradio-companion
 cd gr-llsr/examples
 
 python top_block.py
+
+More examples, see: https://github.com/michelbarbeau/gr-splash
