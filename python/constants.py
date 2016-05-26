@@ -27,7 +27,15 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #  
-#  
+#------------------------------------------
+#  MGMT ERROR CODE 
+#------------------------------------------
+# 0 : SET OPT SUCCESS
+# 1 : OPT FAIL
+# 2 : DEST NOT FOUND
+# 3 : AUTHENTICATION FAIL
+# 4 : SINK NO NEIGHBOUR NODES DETECTED
+#------------------------------------------
 
 # Data/acknowledgement packet  definition
 PKT_PROT_ID = 0
@@ -40,24 +48,25 @@ PROTO_ACK = 4
 PKT_CTRL = 4
 
 PKT_MIN = 5 # packet minimum length
-MGMT_MIN = 3 # packet minimum lenghth
-MGMT_ACK_MIN = 4
+MGMT_MIN = 3 # MGMT packet minimum lenghth
+MGMT_RESP_MIN = 4 # MGMT RESP packet minimum length
 ACK_PKT_LENGTH = 5 # packet length
-MGMT_PKT_LENGTH = 8 # MGMT packet length
-MGMT_ACK_LENGTH = 9 # MGMT ACK packet length
+MGMT_PKT_LENGTH = 9 # MGMT packet length
+MGMT_RESP_LENGTH = 9 # MGMT resp packet length
 # MGMT packet definition
 MGMT_TRACK = 2
-MGMT_VAL = 3
-MGMT_DEST = 4
-MGMT_OPT = 5
-MGMT_OID = 6
-MGMT_HASH = 7
+MGMT_ORG=3
+MGMT_VAL = 4
+MGMT_DEST = 5
+MGMT_OPT = 6
+MGMT_OID = 7
+MGMT_HASH = 8
 # MGMT ACK packet definition
-MGMT_ACK_FLAG=4
-MGMT_ACK_SRC=5
-MGMT_ACK_TRACK=6
-MGMT_ACK_VAL=7
-MGMT_ACK_HASH=8
+MGMT_RESP_FLAG=4 # ERROR CODE 1 NORMAL MSG 0
+MGMT_RESP_SRC=5
+MGMT_RESP_TRACK=6
+MGMT_RESP_VAL=7 # ERROR CODE/ NORMAL MSG
+MGMT_RESP_HASH=8
 
 # Beacon packet definition
 # PKT_INDEX_PROT_ID = 0
@@ -71,7 +80,7 @@ ARQ_PROTO = 0 # unicast acknowledgement packet
 DATA_PROTO = 1 # unicast user data packet
 BEACON_PROTO = 2 # beacon protocol
 MGMT_PROTO = 3 # management protocol
-MGMT_ACK_PROTO = 4 # management ack protocol
+MGMT_RESP_PROTO = 4 # management resp protocol
 # sink address
 SINK_ADDR = 0
 # undefined address
