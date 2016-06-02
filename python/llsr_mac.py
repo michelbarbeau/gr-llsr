@@ -668,7 +668,12 @@ class llsr_mac(gr.basic_block):
 	       # save last packet number from that neighbor
                self.nodes[data[PKT_SRC]].setLpn(data[PKT_CNT])
                # yes! send an acknowledgement
-               self.send_ack(data[PKT_SRC], data[PKT_CNT],data[PKT_PROT_ID]) 
+               self.send_ack(data[PKT_SRC], data[PKT_CNT],data[PKT_PROT_ID])
+	    else:
+		# the packet from an unknown source
+	       if self.debug_stderr: 
+		  sys.stderr.write("%d: Receive a mgmt resp packet from unknown source %d\n" % (self.addr, data[PKT_SRC]))
+	       return
 	    #  packet is new
             if new_packet:
                 # this node is a sink?
@@ -855,7 +860,7 @@ class llsr_mac(gr.basic_block):
                 # save the current packet number 
                 self.expected_ack=self.pkt_cnt 
                 if self.debug_stderr: 
-                   sys.stderr.write("%d:in run_fsm(): sending management ack packet %d\n" % \
+                   sys.stderr.write("%d:in run_fsm(): sending management resp packet %d\n" % \
                    (self.addr,self.pkt_cnt))
                 # record packet type
 		self.pkttype=2
@@ -1203,14 +1208,10 @@ class llsr_mac(gr.basic_block):
         if self.addr==self.next_hop:
             # no! drop the packet
             if self.debug_stderr: 
-                sys.stderr.write("%d:in send_mgmt_resp_radio(): packet dropped (packet to self)\n" %
-                    self.addr) 
+                sys.stderr.write("%d:in send_mgmt_resp_radio(): packet dropped (packet to self)\n" % self.addr) 
             return  
         # yes! data packet header structure
         data = [MGMT_RESP_PROTO, self.addr, self.next_hop, pkt_cnt]
-	if self.debug_stderr: 
-           sys.stderr.write("%d:in send_mgmt_resp_radio(): packet dropped (packet to self)\n" %
-           self.addr) 
         # add payload
         payload = pdu_tuple[0]
         if payload is None:
