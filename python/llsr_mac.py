@@ -989,10 +989,10 @@ class llsr_mac(gr.basic_block):
                     self.send_beacon_pkt() 
             # update the neighbor dictionary 
             self.check_nodes()
-	    # check if the manager is online and get request
+	    # check if the manager is online and handle a snmp request 
 	    if self.addr == SINK_ADDR and self._snmpManager:
 	       self._snmpManager.handle_request()  
-	    # send IN-BAND mgmt pkt if  queue is not empty
+	    # send IN-BAND mgmt pkt if queue is not empty
 	    if self.addr == SINK_ADDR:
 	       while self.snmpmgmttable.pktforsent.qsize()!=0:
 	          self.mgmt_rx(self.snmpmgmttable.pktforsent.get())	

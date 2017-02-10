@@ -27,8 +27,8 @@ class EntryObject(object):
 		try:
 		    return self._rowRequester.getTableSize()
 		except Exception as e:
-		    print('Get TableSize failed %s ' % e)
-		    return None
+		    print('Get TableSize %s ' % e)
+		    return 0
 
 	def getnodeAddr(self, idx):
 		return self._getColumn(idx, 'nodeAddr')

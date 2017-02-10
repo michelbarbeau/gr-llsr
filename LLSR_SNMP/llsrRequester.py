@@ -4,6 +4,7 @@ import struct
 import os
 from socket import error as SocketError
 import errno
+import time
 
 class TableRequester():
 	def __init__(self,host):
@@ -11,28 +12,44 @@ class TableRequester():
 	    self._sock = None
 
 	def _sendInt(self, val):
-	    self._sock.send(struct.pack('I', val))
-
+	    if self._sock:
+	       self._sock.send(struct.pack('I', val))
+	    else:
+		return
 	def _sendStr(self, val):
-	    self._sendInt(len(val))
-	    self._sock.send(val)
+	    if self._sock:
+	       self._sendInt(len(val))
+	       self._sock.send(val)
+	    else:
+	       return
 
 	def _recvInt(self):
-	    return struct.unpack('I', self._sock.recv(4))[0]
-	
+	    if self._sock:
+	       return struct.unpack('I', self._sock.recv(4))[0]
+	    else:
+	       return
+
 	def _recvStr(self):
-	    length = self._recvInt()
-            return self._sock.recv(length)
-	
+	    if self._sock:
+	       length = self._recvInt()
+               return self._sock.recv(length)
+	    else:
+	       return
+
 	def _connect(self):
 	    # check the socketfile if it exists
 	    if os.path.exists(self._socketpath):
 	       #Connect to the socket
 	       self._sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 	       self._sock.connect(self._socketpath)
+            else:
+	       return
 
 	def _close(self):
-            self._sock.close()
+	    if self._sock:
+               self._sock.close()
+	    else:
+	       return
 
 	def setColumn(self, idx, name, val):
 	    try:
@@ -54,10 +71,10 @@ class TableRequester():
 	       val = self._recvStr()
 	       self._close()
 	    except SocketError as e:
-	       print('Connection Error' % e)
+	       print('Time: %s Connection Lost %s ' % (time.time(), e))
 	       return '0'
 	    if val == None:
-	       print("Got None for variable '%s'" % name)
+	       print("Got None for variable '%s' from item %d" % (name, idx))
 	       return '0'
 	    else:
 	       return val
@@ -69,10 +86,10 @@ class TableRequester():
 	       val = self._recvInt()
 	       self._close()
 	    except SocketError as e:
-	       print('Connection Error %s' % e)
+	       print('Time: %s Connection Lost %s ' % (time.time(), e))
 	       return 0
 	    if val == None:
-	       print("Got None from Table")
+	       print("Get 0 item from table")
 	       return 0
 	    else:
 	       return val

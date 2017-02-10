@@ -13,7 +13,7 @@ class llsrHandler(SocketServer.BaseRequestHandler):
 	   return value
         except Exception as e:
            sys.stderr.write("Failed to get value: %s" % e)
-           return None
+           return 'error'
 
     def getTableSize(self):
 	value=self.mgmttable.getTableSize()
@@ -65,7 +65,7 @@ class ManagerServer(SocketServer.UnixStreamServer):
     if os.path.exists("/tmp/udscommunicate"):
        os.remove("/tmp/udscommunicate")
 
-    def __init__(self, tableclass, socketfile = "/tmp/udscommunicate", timeout=0):
+    def __init__(self, tableclass, socketfile = "/tmp/udscommunicate", timeout=10):
        SocketServer.UnixStreamServer.__init__(self, 
                                         socketfile,
                                         llsrHandler)
