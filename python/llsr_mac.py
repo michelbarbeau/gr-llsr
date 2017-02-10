@@ -651,20 +651,12 @@ class llsr_mac(gr.basic_block):
     # meta_dict = dictionary of meta data, in Python type
     # ------------------------------------------------------------
     def _radio_rx(self, data, meta_dict):  
-        # validation
-        # ----------
-        # determine result of CRC evaluation
-        crc_ok = True # default
-        if 'CRC_OK' in meta_dict.keys():
-            crc_ok = meta_dict['CRC_OK']  
-        # valid CRC?
-        if not crc_ok:
-            # no! debug mode enabled?
-            if self.debug_stderr:
-                # log the error
-                sys.stderr.write("in _radio_rx(): packet CRC error\n" )
-            # do nothing!
-            return
+        # check msg size
+	if len(data) < 1:
+	   if self.debug_stderr:
+	       sys.stderr.write("in _radio_rx(): message size 0\n")
+	   return
+	
         # valid protocol ID?
         if not data[PKT_PROT_ID] in [ARQ_PROTO,DATA_PROTO,BEACON_PROTO,MGMT_PROTO,MGMT_RESP_PROTO]:
             # no! log the error
@@ -767,6 +759,9 @@ class llsr_mac(gr.basic_block):
             if data[PKT_CTRL]==NO_ARQ or new_packet:
                 # this node is a sink?
                 if self.addr==SINK_ADDR:
+		    # add row if the PKT_SRC is not in the table
+		    self.snmpmgmttable.addRow(self.createdefaultNewrow(data[PKT_SRC]))
+		    sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
                     # yes! deliver upper layer protocol
                     self.output_user_data((data, meta_dict))
                 # else, forward to next hop
