@@ -25,10 +25,10 @@ class EntryObject(object):
 
 	def getTableSize(self):
 		try:
-			return self._rowRequester.getTableSize()
+		    return self._rowRequester.getTableSize()
 		except Exception as e:
-			print('Get TableSize failed %s ' % e)
-		return None
+		    print('Get TableSize failed %s ' % e)
+		    return None
 
 	def getnodeAddr(self, idx):
 		return self._getColumn(idx, 'nodeAddr')
@@ -136,12 +136,12 @@ class SNMPAgent(object):
 		return
 
 	def serve_forever(self):
-	        print "Starting agent, wait for 5s"
+	        print "Agent Start..."
 		self._snmpEngine.transportDispatcher.jobStarted(1)
 		try:
-   			self._snmpEngine.transportDispatcher.runDispatcher()
+   		    self._snmpEngine.transportDispatcher.runDispatcher()
 		except:
-   			self._snmpEngine.transportDispatcher.closeDispatcher()
+   		    self._snmpEngine.transportDispatcher.closeDispatcher()
     		raise
 
 class maintainTableThread(threading.Thread):
@@ -156,7 +156,7 @@ class maintainTableThread(threading.Thread):
     def run(self):
 	  print "Table Status Fetching FUNC Start"
 	  while True:
-	     time.sleep(5)
+	     time.sleep(1)
 	     tableSize = EntryObject().getTableSize()
 	     print ("threading runing table size: %d" % tableSize)
              if tableSize > self.startIdx:	   	

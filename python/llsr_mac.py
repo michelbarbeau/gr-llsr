@@ -4,8 +4,8 @@
 # ---------------------------------------
 # Location-free Link State Routing (LLSR)
 # --------------------------------------- 
-# Copyright 2016 Michel Barbeau, Carleton University.
-# Version: February 15, 2016
+# Copyright 2016 Michel Barbeau, Wenqian Wang, Carleton University.
+# Version: Feb 9, 2017
 # 
 # This is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

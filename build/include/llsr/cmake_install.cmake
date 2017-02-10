@@ -1,4 +1,4 @@
-# Install script for directory: /home/vincent/gr-llsr-master/include/llsr
+# Install script for directory: /home/vincent/gr-llsr/include/llsr
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,6 +33,6 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/llsr" TYPE FILE FILES "/home/vincent/gr-llsr-master/include/llsr/api.h")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/llsr" TYPE FILE FILES "/home/vincent/gr-llsr/include/llsr/api.h")
 endif()
 

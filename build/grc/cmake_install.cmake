@@ -1,4 +1,4 @@
-# Install script for directory: /home/vincent/gr-llsr-master/grc
+# Install script for directory: /home/vincent/gr-llsr/grc
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,6 +33,6 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gnuradio/grc/blocks" TYPE FILE FILES "/home/vincent/gr-llsr-master/grc/llsr_llsr_mac.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gnuradio/grc/blocks" TYPE FILE FILES "/home/vincent/gr-llsr/grc/llsr_llsr_mac.xml")
 endif()
 

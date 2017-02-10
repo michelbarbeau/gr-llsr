@@ -13,8 +13,8 @@ Zach Renaud, "Network Management for Software Defined Radio Applications", Bache
 
 Wenqian Wang, "Performance Management of Hydroacoustic Surveillance Networks", Master of Computer Science, Graduate Project, School of Computer Science, Carleton University, May 2016.
 
-# Copyright 2016 Michel Barbeau, Carleton University.
-# Version: May 8, 2016
+# Copyright 2016 Michel Barbeau, Wenqian Wang, Carleton University.
+# Version: Feb 9, 2017
 
 ## Installing 
 

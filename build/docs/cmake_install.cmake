@@ -1,4 +1,4 @@
-# Install script for directory: /home/vincent/gr-llsr-master/docs
+# Install script for directory: /home/vincent/gr-llsr/docs
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

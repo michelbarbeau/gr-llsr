@@ -1,4 +1,4 @@
-# Install script for directory: /home/vincent/gr-llsr-master
+# Install script for directory: /home/vincent/gr-llsr
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,18 +33,18 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/llsr" TYPE FILE FILES "/home/vincent/gr-llsr-master/cmake/Modules/llsrConfig.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/llsr" TYPE FILE FILES "/home/vincent/gr-llsr/cmake/Modules/llsrConfig.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/vincent/gr-llsr-master/build/include/llsr/cmake_install.cmake")
-  include("/home/vincent/gr-llsr-master/build/lib/cmake_install.cmake")
-  include("/home/vincent/gr-llsr-master/build/swig/cmake_install.cmake")
-  include("/home/vincent/gr-llsr-master/build/python/cmake_install.cmake")
-  include("/home/vincent/gr-llsr-master/build/grc/cmake_install.cmake")
-  include("/home/vincent/gr-llsr-master/build/apps/cmake_install.cmake")
-  include("/home/vincent/gr-llsr-master/build/docs/cmake_install.cmake")
+  include("/home/vincent/gr-llsr/build/include/llsr/cmake_install.cmake")
+  include("/home/vincent/gr-llsr/build/lib/cmake_install.cmake")
+  include("/home/vincent/gr-llsr/build/swig/cmake_install.cmake")
+  include("/home/vincent/gr-llsr/build/python/cmake_install.cmake")
+  include("/home/vincent/gr-llsr/build/grc/cmake_install.cmake")
+  include("/home/vincent/gr-llsr/build/apps/cmake_install.cmake")
+  include("/home/vincent/gr-llsr/build/docs/cmake_install.cmake")
 
 endif()
 
@@ -56,5 +56,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/vincent/gr-llsr-master/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/vincent/gr-llsr/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

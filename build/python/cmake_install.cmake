@@ -1,4 +1,4 @@
-# Install script for directory: /home/vincent/gr-llsr-master/python
+# Install script for directory: /home/vincent/gr-llsr/python
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,23 +34,23 @@ endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages/llsr" TYPE FILE FILES
-    "/home/vincent/gr-llsr-master/python/__init__.py"
-    "/home/vincent/gr-llsr-master/python/llsr_mac.py"
-    "/home/vincent/gr-llsr-master/python/constants.py"
-    "/home/vincent/gr-llsr-master/python/llsrHandler.py"
+    "/home/vincent/gr-llsr/python/__init__.py"
+    "/home/vincent/gr-llsr/python/llsr_mac.py"
+    "/home/vincent/gr-llsr/python/constants.py"
+    "/home/vincent/gr-llsr/python/llsrHandler.py"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages/llsr" TYPE FILE FILES
-    "/home/vincent/gr-llsr-master/build/python/__init__.pyc"
-    "/home/vincent/gr-llsr-master/build/python/llsr_mac.pyc"
-    "/home/vincent/gr-llsr-master/build/python/constants.pyc"
-    "/home/vincent/gr-llsr-master/build/python/llsrHandler.pyc"
-    "/home/vincent/gr-llsr-master/build/python/__init__.pyo"
-    "/home/vincent/gr-llsr-master/build/python/llsr_mac.pyo"
-    "/home/vincent/gr-llsr-master/build/python/constants.pyo"
-    "/home/vincent/gr-llsr-master/build/python/llsrHandler.pyo"
+    "/home/vincent/gr-llsr/build/python/__init__.pyc"
+    "/home/vincent/gr-llsr/build/python/llsr_mac.pyc"
+    "/home/vincent/gr-llsr/build/python/constants.pyc"
+    "/home/vincent/gr-llsr/build/python/llsrHandler.pyc"
+    "/home/vincent/gr-llsr/build/python/__init__.pyo"
+    "/home/vincent/gr-llsr/build/python/llsr_mac.pyo"
+    "/home/vincent/gr-llsr/build/python/constants.pyo"
+    "/home/vincent/gr-llsr/build/python/llsrHandler.pyo"
     )
 endif()
 
