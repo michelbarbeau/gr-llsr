@@ -8,6 +8,8 @@ import llsrRequester
 import threading
 import collections
 import time
+import datetime
+import struct
 
 MIB='LLSR-MIB'
 # row structure
@@ -60,6 +62,7 @@ class EntryObject(object):
 	def setmgmtMode(self, idx, val):
 		self._rowRequester.setColumn(idx, 'mgmtMode', val)
 
+#public method 
 def createColumn(SuperClass, getValue, setValue, idx, *args):
     class Var(SuperClass):
         def readGet(self, name, *args):
@@ -69,6 +72,9 @@ def createColumn(SuperClass, getValue, setValue, idx, *args):
                 setValue(idx, val)
 
     return Var(*args)
+
+def TimestampPrint():
+	return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S+%s')
 
 #Implements an Agent that serves the custom MIB and can send a trap.
 class SNMPAgent(object):
@@ -158,14 +164,20 @@ class maintainTableThread(threading.Thread):
 	  while True:
 	     time.sleep(1)
 	     tableSize = EntryObject().getTableSize()
-	     print ("threading runing table size: %d" % tableSize)
+	     #print ("threading runing table size: %d" % tableSize)
+	     #print ("%s : " % (TimestampPrint()))
              if tableSize > self.startIdx:	   	
 		self.updateTable(self.startIdx, tableSize, self.columnObjects, self.mibBuilder, self.MibScalarInstance)
 		self.startIdx=tableSize
+		print ("%s : Table Size: %d\n" % (TimestampPrint(), tableSize))
+		print "====================\n"
+		self.printTable()
+	     elif tableSize == self.startIdx:
+	        self.printTable()
 	
     def updateTable(self, startIdx, tableSize, columnObjects, mibBuilder, MibScalarInstance):
 	for idx in range(startIdx, tableSize):
-	     print ("index: % d, lastIndex: % d, tableSize: % d" % (idx, startIdx, tableSize))
+	     #print ("index: % d, lastIndex: % d, tableSize: % d" % (idx, startIdx, tableSize))
 	     for columnObject in columnObjects:
 	         nextVar, = mibBuilder.importSymbols(columnObject.mibname, columnObject.columnname)
 		 instance = createColumn(MibScalarInstance,
@@ -176,8 +188,21 @@ class maintainTableThread(threading.Thread):
 					 nextVar.syntax)
 		 instanceDict = {str(nextVar.name)+str(idx):instance}
 		 mibBuilder.exportSymbols(columnObject.mibname, **instanceDict)
-
-
+     
+    
+    def printTable(self):
+	entry = EntryObject()
+	for i in range (entry.getTableSize()):
+	    print ("%s : nodeAddress: %s \n" % (TimestampPrint(), entry.getnodeAddr(i)))
+	    print ("---MaxAttempts: %s\n" % entry.getmaxAttempts(i))
+            print ("---BroadcastInterval: %s\n" % entry.getbroadcastInterval(i))
+	    print ("---MgmtMode: %s\n" % entry.getmgmtMode(i))
+	    print ("---LastUpdated: %s\n" % entry.getlastUpdated(i))
+	    print ("---LastUpdatedTime(UTC) %s \n" % datetime.datetime(*struct.unpack('>HBBBBBB', entry.getlastUpdatedTime(i))))
+	    print ("---MgmtInfo: %s\n" % entry.getmgmtInfo(i))
+	    print "====================\n"
+	
+	
 if __name__ == '__main__':
     entry = EntryObject()
     #list[index, RowObjects]

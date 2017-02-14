@@ -14,7 +14,8 @@
       $node_expiry_delay,
       $max_queue_size,
       $errors_to_file,
-      $data_to_file)
+      $data_to_file,
+      $debug_info)
   </make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
@@ -104,6 +105,21 @@
       <key>False</key>
     </option>
   </param>
+  <param>
+    <name>Debug Info</name>
+    <key>debug_info</key>
+    <value>0</value>
+    <type>enum</type>
+    <option>
+      <name>Detailed</name>
+      <key>0</key>
+    </option>
+    <option>
+      <name>Essential</name>
+      <key>1</key>
+    </option>
+  </param>
+
   <!-- Make one 'sink' node per input. Sub-nodes:
        * name (an identifier for the GUI)
        * type

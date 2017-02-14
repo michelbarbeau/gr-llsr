@@ -228,7 +228,8 @@ class llsr_mac(gr.basic_block):
                  node_expiry_delay=60.0,
 		 max_queue_size=10,
 		 errors_to_file=False,
-		 data_to_file=False):
+		 data_to_file=False,
+	         debug_info=0):
         gr.basic_block.__init__(self,
             name="llsr_mac",
             in_sig=None,
@@ -299,6 +300,8 @@ class llsr_mac(gr.basic_block):
         self.node_expiry_delay=node_expiry_delay
         # beacon broadcast period
         self.broadcast_interval=broadcast_interval
+	# debug information
+	self.debug_info=debug_info
 	# MGMTMODE
 	self.mgmtMode = 0
 	# SNMP mgmt table for sink
@@ -655,8 +658,7 @@ class llsr_mac(gr.basic_block):
 	if len(data) < 1:
 	   if self.debug_stderr:
 	       sys.stderr.write("in _radio_rx(): message size 0\n")
-	   return
-	
+           return	
         # valid protocol ID?
         if not data[PKT_PROT_ID] in [ARQ_PROTO,DATA_PROTO,BEACON_PROTO,MGMT_PROTO,MGMT_RESP_PROTO]:
             # no! log the error
@@ -665,10 +667,10 @@ class llsr_mac(gr.basic_block):
                     (data[PKT_PROT_ID]))
         # valid packet length?
         if (data[PKT_PROT_ID]==ARQ_PROTO and len(data) != ACK_PKT_LENGTH) or \
-            (data[PKT_PROT_ID]==DATA_PROTO and len(data) < PKT_MIN) or \
-	    (data[PKT_PROT_ID]==MGMT_PROTO and len(data)!= MGMT_PKT_LENGTH) or \
-	    (data[PKT_PROT_ID]==MGMT_RESP_PROTO and len(data)!=MGMT_RESP_LENGTH) or \
-            (data[PKT_PROT_ID]==BEACON_PROTO and len(data) != BEACON_PKT_LENGTH):
+           (data[PKT_PROT_ID]==DATA_PROTO and len(data) < PKT_MIN) or \
+	   (data[PKT_PROT_ID]==MGMT_PROTO and len(data)!= MGMT_PKT_LENGTH) or \
+	   (data[PKT_PROT_ID]==MGMT_RESP_PROTO and len(data)!=MGMT_RESP_LENGTH) or \
+           (data[PKT_PROT_ID]==BEACON_PROTO and len(data) != BEACON_PKT_LENGTH):
             # no! log the error
             if self.debug_stderr: 
                 sys.stderr.write("in _radio_rx(): invalid packet length: %d\n" % \
@@ -705,10 +707,6 @@ class llsr_mac(gr.basic_block):
         # beacon packet processing
         # ------------------------
         if data[PKT_PROT_ID]==BEACON_PROTO:
-	    # add to mgmttable
-	    if self.addr==SINK_ADDR:
-		self.snmpmgmttable.addRow(self.createdefaultNewrow(data[PKT_SRC]))
-		sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
             # yes! source a known neighbor?
             node=None
             if data[PKT_SRC] in self.nodes.keys():
@@ -719,11 +717,17 @@ class llsr_mac(gr.basic_block):
             else:
                 # no! create a new node entry
                 node=Node(time.time(),data[PKT_HC],data[PKT_PQ])
-                self.nodes[data[PKT_SRC]]=node           
+                self.nodes[data[PKT_SRC]]=node
+		# add to mgmttable
+		if self.addr==SINK_ADDR:
+		   self.snmpmgmttable.addRow(self.createdefaultNewrow(data[PKT_SRC]))
+	           if self.debug_stderr:
+		      sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" %\
+		      (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))           
             # debug mode enabled?
             if self.debug_stderr:
                 sys.stderr.write("%d:in _radio_rx(): node %d is alive\n" % \
-                     (self.addr,data[PKT_SRC]))
+                (self.addr,data[PKT_SRC]))
             # select next hop and update routing metrics
             self.SelectNextHop()
             # done!
@@ -754,16 +758,19 @@ class llsr_mac(gr.basic_block):
 			# save last packet number from that neighbor
                 	self.nodes[data[PKT_SRC]].setLpn(data[PKT_CNT])
                         # yes! send an acknowledgement
-                        self.send_ack(data[PKT_SRC], data[PKT_CNT],data[PKT_PROT_ID]) 
+                        self.send_ack(data[PKT_SRC], data[PKT_CNT],data[PKT_PROT_ID])
+		else:
+		    if self.debug_stderr:
+		       sys.stderr.write("%d:in_radio_rx(): data from unknown neighbour" % self.addr) 
 	    #  ARQ protocol not used or packet is new
             if data[PKT_CTRL]==NO_ARQ or new_packet:
                 # this node is a sink?
                 if self.addr==SINK_ADDR:
-		    # add row if the PKT_SRC is not in the table
-		    self.snmpmgmttable.addRow(self.createdefaultNewrow(data[PKT_SRC]))
-		    sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
+		    #sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
                     # yes! deliver upper layer protocol
                     self.output_user_data((data, meta_dict))
+ 		    # add row if the PKT_SRC is not in the table
+		    self.snmpmgmttable.addRow(self.createdefaultNewrow(data[PKT_SRC]))
                 # else, forward to next hop
                 else:
                     self._app_rx(self.pdupacker(data[PKT_MIN:]),data[PKT_CTRL])
@@ -1060,7 +1067,7 @@ class llsr_mac(gr.basic_block):
                 # save the current packet number 
                 self.expected_ack=self.pkt_cnt 
                 if self.debug_stderr: 
-                   sys.stderr.write("%d:in run_fsm(): sending packet %d\n" % \
+                   sys.stderr.write("%d:in run_fsm(): sending data packet %d\n" % \
                    (self.addr,self.pkt_cnt))
                 # record packet type
 		self.pkttype=0
@@ -1114,7 +1121,7 @@ class llsr_mac(gr.basic_block):
                     time_now=time.time()
                     # re-transmit the packet
                     if self.debug_stderr: 
-                        sys.stderr.write("CHANNEL-BUSY: %d in run_fsm(): retransmission after %d retries\n" % \
+                        sys.stderr.write("%d: CHANNEL-BUSYin run_fsm(): retransmission after %d retries\n" % \
                         (self.addr, self.retries))
 			sys.stderr.write("current retransmission pkttype: %d\n" % self.pkttype)
 	 	    # check the type of last packet that use the fsm

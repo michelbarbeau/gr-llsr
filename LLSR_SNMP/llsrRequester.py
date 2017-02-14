@@ -5,6 +5,7 @@ import os
 from socket import error as SocketError
 import errno
 import time
+import datetime
 
 class TableRequester():
 	def __init__(self,host):
@@ -71,7 +72,7 @@ class TableRequester():
 	       val = self._recvStr()
 	       self._close()
 	    except SocketError as e:
-	       print('Time: %s Connection Lost %s ' % (time.time(), e))
+	       print('%s: Connection Lost %s ' % (TimestampPrint(), e))
 	       return '0'
 	    if val == None:
 	       print("Got None for variable '%s' from item %d" % (name, idx))
@@ -86,7 +87,7 @@ class TableRequester():
 	       val = self._recvInt()
 	       self._close()
 	    except SocketError as e:
-	       print('Time: %s Connection Lost %s ' % (time.time(), e))
+	       print('%s: Connection Lost %s ' %(TimestampPrint(), e))
 	       return 0
 	    if val == None:
 	       print("Get 0 item from table")
@@ -94,6 +95,8 @@ class TableRequester():
 	    else:
 	       return val
 
+def TimestampPrint():
+	return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S+%s')
 # if __name__ == '__main__':
 #    requester = TableRequester()
 #    print ("Getting v1: %s" % requester.getColumn(0, "v1"))
