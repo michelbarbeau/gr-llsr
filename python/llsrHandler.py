@@ -65,37 +65,36 @@ class ManagerServer(SocketServer.UnixStreamServer):
     if os.path.exists("/tmp/udscommunicate"):
        os.remove("/tmp/udscommunicate")
 
-    def __init__(self, tableclass, socketfile = "/tmp/udscommunicate", timeout=10):
+    def __init__(self, tableclass, socketfile = "/tmp/udscommunicate", timeout=0):
        SocketServer.UnixStreamServer.__init__(self, 
                                         socketfile,
                                         llsrHandler)
        self.socket.settimeout(timeout)
        self.RequestHandlerClass.mgmttable = tableclass
 
-# class Test():
-#     def __init__(self, v1, v2):
-#         self.v1 = v1
-#         self.v2 = v2
+#class Test():
+#    def __init__(self, v1):
+#        self.v1 = v1
 
-#     def __str__(self):
-#         return ("{ %s, %d }" % (self.v1, self.v2))
+#    def __str__(self):
+#        return ("{ %s }" % (self.v1))
 
-# def runTest():
-#     test = Test("Hello", 4)
+#def runTest():
+#    test = Test("Hello")
 
-#     # Create the server, binding to localhost on port 9999
-#     #server = SocketServer.TCPServer((host, port), StateManager)
-#     #server.socket.settimeout(0)
-#     #server.RequestHandlerClass.managedObject = test
-#     server = ManagerServer(test)
+#    # Create the server, binding to localhost on port 9999
+#    #server = SocketServer.TCPServer((host, port), StateManager)
+#    #server.socket.settimeout(0)
+#    #server.RequestHandlerClass.managedObject = test
+#    server = ManagerServer(test)
 
 #     #server.serve_forever()
-#     while True:
-#         time.sleep(1)
-#         print("Doing other work...")
-#         server.handle_request()
-#         print("Test: %s" % test)
+#    while True:
+#        time.sleep(1)
+#        print("Doing other work...")
+#        server.handle_request()
+#        print("Test: %s" % test)
 
 
-# if __name__ == "__main__":
-#     runTest()
+#if __name__ == "__main__": 
+#   runTest()
