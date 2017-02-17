@@ -59,7 +59,7 @@ from gnuradio import gr
 import pmt
 from gnuradio.digital import packet_utils
 import gnuradio.digital as gr_digital
-import sys, time, random, struct, threading, hashlib, struct, collections, logging
+import sys, time, random, struct, threading, hashlib, struct, collections
 from datetime import datetime
 from math import pi
 import Queue
@@ -237,28 +237,29 @@ class llsr_mac(gr.basic_block):
             out_sig=None)
         # lock for exclusive access
         self.lock=threading.RLock()
-	self.errors_to_file=errors_to_file
-	self.data_to_file=data_to_file
-	if errors_to_file or data_to_file:
-	   formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')	
-	   if errors_to_file:
-		self.logdebuginfo = logging.getLogger('simple logger_debug')
-		hdlr_1 = logging.FileHandler('errors_'+str(addr)+'.log')
-		hdlr_1.setFormatter(formatter)
-		logger_1.addHandler(hdlr_1)
-#		# redirect standard error stream to a file
-#		errorFilename="errors_"+str(addr)+".txt"
-#		self.erroroutput=open(errorFilename,"w")
-#		self.erroroutput.write("*** START: "+time.asctime(time.localtime(time.time()))+"\n")
-	   if data_to_file:
-		self.logdatainfo = logging.getLogger('simple logger_data')
-		hdlr_2 = logging.FileHandler('data_'+str(addr)+'.log')
-		hdlr_2.setFormatter(formatter)
-		self.logdatainfo.addHandler(hdlr_2)		
-#		# redirect standard output stream to a file
-#		dataFilename="data_"+str(addr)+".txt"
-#		self.dataoutput=open(dataFilename,"w")
-#		self.dataoutput.write("***START: "+time.asctime(time.localtime(time.time()))+"\n")
+#	self.errors_to_file=errors_to_file
+#	self.data_to_file=data_to_file
+#	if errors_to_file or data_to_file:
+#	   formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')	
+	if errors_to_file:
+#		self.logdebuginfo = logging.getLogger('simple logger_debug')
+#		hdlr_1 = logging.FileHandler('errors_'+str(addr)+'.log')
+#		hdlr_1.setFormatter(formatter)
+#		self.logdebuginfo.addHandler(hdlr_1)
+		# redirect standard error stream to a file
+           errorFilename="errors_"+str(addr)+".txt"
+	   sys.stderr=open(errorFilename,"w")
+	   sys.stderr.write("*** START: "+time.asctime(time.localtime(time.time()))+"\n")
+	if data_to_file:
+#		self.logdatainfo = logging.getLogger('simple logger_data')
+#		hdlr_2 = logging.FileHandler('data_'+str(addr)+'.log')
+#		hdlr_2.setFormatter(formatter)
+#		self.logdatainfo.addHandler(hdlr_2)		
+		# redirect standard output stream to a file
+	   dataFilename="data_"+str(addr)+".txt"
+           sys.stdout=open(dataFilename,"w")
+	   sys.stdout.write("***START: "+time.asctime(time.localtime(time.time()))+"\n")
+	   sys.stdout.flush()
         # debug mode flag
         self.debug_stderr=True
         # node address
@@ -332,8 +333,7 @@ class llsr_mac(gr.basic_block):
 	    self.snmpmgmttable=MGMTTable()
 	    # mgmttable added SINK
 	    self.snmpmgmttable.addRow(self.createdefaultNewrow(self.addr))
-	    #sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(), \
-	    #self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
+	    sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
             # Start SNMP TCP-Request Service
   	    try:
 	       self._snmpManager = llsrHandler.ManagerServer(self.snmpmgmttable)
@@ -364,25 +364,28 @@ class llsr_mac(gr.basic_block):
     # ------------------------------------------
     # debug info print out
     # ------------------------------------------
-    def DebugInfoPrinting(self, infotype, debugmsg, *args):	
-	if args:
-	   output=debugmsg.format(*args)
-	else:
-	   output=debugmsg
-	if output is not None:
-	# infotype 1 is error, 0 is data
-	   if infotype==1:
-	      if self.errors_to_file:
-		 self.logdebuginfo.info(output)
-	      else:
-		 sys.stderr.write(output)
-	   if infotype==0:
-	      if self.data_to_file:
-		 self.logdatainfo.info(output)
-	      else:
-		 sys.stdout.write(output)
-	else:
-	   return
+#    def DebugInfoPrinting(self, infotype, debugmsg, *args):	
+#	if args:
+#	   output=debugmsg.format(*args)
+#	else:
+#	   output=debugmsg
+#	if output is not None:
+#	# infotype 2 is error, 1 is debug info, 0 is data
+#	   if infotype==1:
+#	      if self.errors_to_file:
+#		 self.logdebuginfo.info(output)
+#	      else:
+#		 sys.stderr.write(output)
+#	   elif infotype==2:
+#	      if self.errors_to_file:
+#		 self.logdebuginfo.error(output)
+#	   elif infotype==0:
+#	      if self.data_to_file:
+#		 self.logdatainfo.info(output)
+#	      else:
+#		 sys.stdout.write(output)
+#	else:
+#	   return
 	
     def get_rx_byte_count(self):
         return self.rx_byte_count
@@ -433,6 +436,7 @@ class llsr_mac(gr.basic_block):
            # log the packet
            sys.stderr.write("in SelectNextHop(): addr: %d, hc: %d, pq: %d, next hop: %d\n" % \
                 (self.addr,self.hc,self.pq,self.next_hop))
+#	self.DebugInfoPrinting(self, 1, "Node {0}: in SelectNextHop(): hc: {1}, pq: {2}, next hop: {3}\n", self.addr, self.hc, self.pq, self.next_hop)
 
     # ----------------------------------
     # pretty printing of a beacon packet
@@ -628,7 +632,8 @@ class llsr_mac(gr.basic_block):
         # print data
         for i in range (0,len(pdu_tuple[0])):
             sys.stdout.write("%d " % pdu_tuple[0][i])
-        sys.stdout.write("\n") 
+        sys.stdout.write("\n")
+	sys.stdout.flush() 
 
     # -----------------------------------
     # scan and update the node dictionary
@@ -779,7 +784,7 @@ class llsr_mac(gr.basic_block):
         if data[PKT_PROT_ID]==DATA_PROTO:
             # valid control field?
             if not data[PKT_CTRL] in [ARQ, NO_ARQ]:
-                # no! log the error
+                # no! log the error	
                 if self.debug_stderr:
                     sys.stderr.write("%d:in _radio_rx(): bad control field: %d\n" % 
                          (self.addr,data[PKT_CTRL]))
@@ -789,7 +794,8 @@ class llsr_mac(gr.basic_block):
             new_packet=False
             if data[PKT_CTRL]==ARQ:
                 # source in neighbor dictionary?
-		if self.nodes[data[PKT_SRC]]:
+		#if self.nodes[data[PKT_SRC]]:
+		if data[PKT_SRC] in self.nodes.keys():
                         # last packet number and new packet number different?
 			new_packet=self.nodes[data[PKT_SRC]].lpn!=data[PKT_CNT] 
 			# save last packet number from that neighbor
@@ -803,7 +809,7 @@ class llsr_mac(gr.basic_block):
             if data[PKT_CTRL]==NO_ARQ or new_packet:
                 # this node is a sink?
                 if self.addr==SINK_ADDR:
-		    #sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(),	 			    self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
+		    sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(),self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
                     # yes! deliver upper layer protocol
                     self.output_user_data((data, meta_dict))
  		    # add row if the PKT_SRC is not in the table
@@ -852,7 +858,8 @@ class llsr_mac(gr.basic_block):
         if data[PKT_PROT_ID]==MGMT_RESP_PROTO:
             new_packet=False
             # source in neighbor dictionary?
-	    if self.nodes[data[PKT_SRC]]:
+	    #if self.nodes[data[PKT_SRC]]:
+	    if data[PKT_SRC] in self.nodes.keys():
                # last packet number and new packet number different?
 	       new_packet=self.nodes[data[PKT_SRC]].lpn!=data[PKT_CNT] 
 	       # save last packet number from that neighbor
@@ -1029,7 +1036,7 @@ class llsr_mac(gr.basic_block):
             # update the neighbor dictionary 
             self.check_nodes()
 	    # check if the manager is online and handle a snmp request 
-	    if self.addr == SINK_ADDR and hasattr(self, '_snmpManager'):
+	    if self.addr == SINK_ADDR:
 	       self._snmpManager.handle_request()  
 	    # send IN-BAND mgmt pkt if queue is not empty
 	    if self.addr == SINK_ADDR:
