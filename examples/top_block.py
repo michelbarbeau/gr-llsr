@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Fri Feb 17 12:01:31 2017
+# Generated: Thu Feb 23 15:52:37 2017
 ##################################################
 
 if __name__ == '__main__':
@@ -65,7 +65,7 @@ class top_block(gr.top_block, Qt.QWidget):
               0.05,
               10.0,
               10,
-              False,
+              True,
               True,
               0)
           

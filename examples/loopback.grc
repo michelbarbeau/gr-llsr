@@ -470,7 +470,7 @@
     </param>
     <param>
       <key>errors_to_file</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>

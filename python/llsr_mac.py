@@ -250,6 +250,7 @@ class llsr_mac(gr.basic_block):
            errorFilename="errors_"+str(addr)+".txt"
 	   sys.stderr=open(errorFilename,"w")
 	   sys.stderr.write("*** START: "+time.asctime(time.localtime(time.time()))+"\n")
+	   sys.stderr.flush()
 	if data_to_file:
 #		self.logdatainfo = logging.getLogger('simple logger_data')
 #		hdlr_2 = logging.FileHandler('data_'+str(addr)+'.log')
@@ -333,7 +334,8 @@ class llsr_mac(gr.basic_block):
 	    self.snmpmgmttable=MGMTTable()
 	    # mgmttable added SINK
 	    self.snmpmgmttable.addRow(self.createdefaultNewrow(self.addr))
-	    sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
+	    self.DebugInfoPrinting(0, 0, "SNMP_Table Size: {0}, Added new Node: {1} \n", self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr'))
+	    #sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" % (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
             # Start SNMP TCP-Request Service
   	    try:
 	       self._snmpManager = llsrHandler.ManagerServer(self.snmpmgmttable)
@@ -364,28 +366,25 @@ class llsr_mac(gr.basic_block):
     # ------------------------------------------
     # debug info print out
     # ------------------------------------------
-#    def DebugInfoPrinting(self, infotype, debugmsg, *args):	
-#	if args:
-#	   output=debugmsg.format(*args)
-#	else:
-#	   output=debugmsg
-#	if output is not None:
-#	# infotype 2 is error, 1 is debug info, 0 is data
-#	   if infotype==1:
-#	      if self.errors_to_file:
-#		 self.logdebuginfo.info(output)
-#	      else:
-#		 sys.stderr.write(output)
-#	   elif infotype==2:
-#	      if self.errors_to_file:
-#		 self.logdebuginfo.error(output)
-#	   elif infotype==0:
-#	      if self.data_to_file:
-#		 self.logdatainfo.info(output)
-#	      else:
-#		 sys.stdout.write(output)
-#	else:
-#	   return
+    def DebugInfoPrinting(self, outputype, debugtype, debugmsg, *args):
+	output = None	
+	if args:
+	   output=debugmsg.format(*args)
+	else:
+	   output=debugmsg
+	if output is not None:
+	# infotype 1 is essential
+	   if self.debug_info == 0 and outputype == 0:
+	     if debugtype == 0:
+	     	sys.stderr.write(output)
+		sys.stderr.flush()
+	     if debugtype == 1:
+		sys.stdout.write(output)
+		sys.stdout.flush()
+	   if self.debug_info == 0 and outputype == 1:
+	     return
+	else:
+	   return
 	
     def get_rx_byte_count(self):
         return self.rx_byte_count
@@ -434,8 +433,8 @@ class llsr_mac(gr.basic_block):
             self.next_hop=UNDEF_ADDR
         if self.debug_stderr: 
            # log the packet
-           sys.stderr.write("in SelectNextHop(): addr: %d, hc: %d, pq: %d, next hop: %d\n" % \
-                (self.addr,self.hc,self.pq,self.next_hop))
+           self.DebugInfoPrinting(0, 0, "in SelectNextHop(): addr: {0}, hc: {1}, pq: {2}, next hop: {3}\n", self.addr, self.hc, self.pq, self.next_hop)
+           #sys.stderr.write("in SelectNextHop(): addr: %d, hc: %d, pq: %d, next hop: %d\n" % (self.addr,self.hc,self.pq,self.next_hop))
 #	self.DebugInfoPrinting(self, 1, "Node {0}: in SelectNextHop(): hc: {1}, pq: {2}, next hop: {3}\n", self.addr, self.hc, self.pq, self.next_hop)
 
     # ----------------------------------
