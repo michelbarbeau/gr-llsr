@@ -3,25 +3,25 @@
 #
 # ---------------------------------------
 # Location-free Link State Routing (LLSR)
-# --------------------------------------- 
+# ---------------------------------------
 # Copyright 2016 Michel Barbeau, Wenqian Wang, Carleton University.
 # Version: Feb 9, 2017
-# 
+#
 # This is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this software; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-# 
+#
 # Re-using file simple_mac.py by:
 # Copyright 2013 John Malsbury
 # Copyright 2014 Balint Seeber <balint256@gmail.com>
@@ -30,15 +30,15 @@
 # The module implements the protocol originally described in:
 # Michel Barbeau, Stephane Blouin, Gimer Cervera, Joaquin Garcia-Alfaro
 # and Evangelos Kranakis, "Location-free Link State Routing for Underwater
-# Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on 
-# Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS, 
-# Canada. 
+# Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on
+# Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS,
+# Canada.
 #
 # The program has four entry points:
 # 1. "Constructor": __init__()
 # 2. Handler: radio_rx()
 #    Handles a message from the radio.
-#    Call sequence: _radio_rx() -> 
+#    Call sequence: _radio_rx() ->
 #        [SelectNextHop() | _app_rx() | run_fsm() ]
 # 3. Handler: app_rx()
 #    Accepts a PDU from the application and sends it.
@@ -46,7 +46,7 @@
 #        send_pkt_radio()
 # 4. Handler: app_rx_arq()
 #    Accepts a PDU from the application and sends using the ARQ protocol.
-#    Call sequence: _app_rx() -> dispatch_app_rx() -> queue.put() -> 
+#    Call sequence: _app_rx() -> dispatch_app_rx() -> queue.put() ->
 #        run_fsm() -> tx_arq() -> send_pkt_radio()
 # 5. Handler: ctrl_rx()
 #    Handles a control signal.
@@ -90,7 +90,7 @@ class Node():
         # set last packet number
         self.lpn = lpn
 
-# Monitoring Table for SINK 
+# Monitoring Table for SINK
 # --------------------
 class MGMTTable(object):
     def __init__(self):
@@ -101,7 +101,7 @@ class MGMTTable(object):
 	# track pack index
 	self.mgmttrackIndex=0
 	self.oidRef={'nodeAddr':1, 'maxAttempts':2, 'broadcastInterval':3, 'mgmtMode':4}
-	# global Queue for putting MGMT CMD	
+	# global Queue for putting MGMT CMD
 	self.pktforsent=Queue.Queue()
 
     def getTableSize(self):
@@ -122,7 +122,7 @@ class MGMTTable(object):
 	   # store the cmd in the cmd table
 	   destNode=self.MGMTTable[idx]['nodeAddr']
 	   mgmtmsg=[value, destNode, 1, self.oidRef.get(name)]
-           # cmd stored for resp msg processing 
+           # cmd stored for resp msg processing
 	   storedcmd=[destNode, idx, name, value]
 	   # putting into the cmd dict
 	   self.cmddict.update({self.mgmttrackIndex:storedcmd})
@@ -165,32 +165,32 @@ class MGMTTable(object):
 	      sys.stderr.write("wrong id matching in the MGMTTable nodeAddr: %d pktsrc: %d" %())
 	else:
 	   sys.stderr.write("track number %d is not existed in the cmd dict\n")
-	
+
     # add row
     def addRow(self, row):
 	flag=self._checkNode(row['nodeAddr'])
 	# new node
 	if flag==-1:
 	   self.MGMTTable.append(row)
-           sys.stderr.write("SNMP MGMT Node %d added:\n" % row['nodeAddr'])	 
+           sys.stderr.write("SNMP MGMT Node %d added:\n" % row['nodeAddr'])
 	# not new
 	else:
 	   if self.MGMTTable[flag]['mgmtInfo']==4:
 	      self.MGMTTable[flag]['mgmtInfo']=0
               sys.stderr.write("SNMP MGMT Node %d activated :\n" % row['nodeAddr'])
 	   else:
-	      sys.stderr.write("SNMP MGMT Node %d is already activated :\n" % row['nodeAddr'])	   
+	      sys.stderr.write("SNMP MGMT Node %d is already activated :\n" % row['nodeAddr'])
     # deactivated
     def deactivateNode(self, addr):
 	if self._checkNode(addr)!=-1:
 	   idx=self._checkNode(addr)
 	   if self.MGMTTable[idx]['mgmtInfo']!=4:
-	      self.MGMTTable[idx]['mgmtInfo']==4	
+	      self.MGMTTable[idx]['mgmtInfo']==4
 	      sys.stderr.write("SNMP MGMT Node %d deactivated :\n" % addr)
 	   else:
 	      sys.stderr.write("SNMP MGMT Node %d deactivated is already deactivated :\n" % addr)
     	else:
-	   sys.stderr.write("SNMP MGMT Node %d not existed:\n" % addr) 
+	   sys.stderr.write("SNMP MGMT Node %d not existed:\n" % addr)
 
     # -------------------------
     # PDU packing for SINK MGMT MSG(SAME IN LLSR_MAC)
@@ -198,7 +198,7 @@ class MGMTTable(object):
     def _pdupacker(self, data):
 	pdu = pmt.cons( \
         pmt.to_pmt({}), \
-        pmt.init_u8vector(len(data), data))		
+        pmt.init_u8vector(len(data), data))
         return pdu
 
     # ------------------------------
@@ -209,10 +209,10 @@ class MGMTTable(object):
 	timestr=map(int,temp)
 	final=struct.pack('>HBBBBBB', *timestr)
 	return final
- 
+
     # ------------------------------
-    # check node 
-    # ------------------------------   
+    # check node
+    # ------------------------------
     def _checkNode(self, addr):
 	for r in self.MGMTTable:
 	    if r['nodeAddr']==addr:
@@ -240,7 +240,7 @@ class llsr_mac(gr.basic_block):
 #	self.errors_to_file=errors_to_file
 #	self.data_to_file=data_to_file
 #	if errors_to_file or data_to_file:
-#	   formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')	
+#	   formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 	if errors_to_file:
 #		self.logdebuginfo = logging.getLogger('simple logger_debug')
 #		hdlr_1 = logging.FileHandler('errors_'+str(addr)+'.log')
@@ -255,7 +255,7 @@ class llsr_mac(gr.basic_block):
 #		self.logdatainfo = logging.getLogger('simple logger_data')
 #		hdlr_2 = logging.FileHandler('data_'+str(addr)+'.log')
 #		hdlr_2.setFormatter(formatter)
-#		self.logdatainfo.addHandler(hdlr_2)		
+#		self.logdatainfo.addHandler(hdlr_2)
 		# redirect standard output stream to a file
 	   dataFilename="data_"+str(addr)+".txt"
            sys.stdout=open(dataFilename,"w")
@@ -264,14 +264,14 @@ class llsr_mac(gr.basic_block):
         # debug mode flag
         self.debug_stderr=True
         # node address
-        self.addr = addr                               
+        self.addr = addr
         # packet number
-        self.pkt_cnt=0                    
+        self.pkt_cnt=0
         # number of transmitted ARQ packets
-        self.arq_pkts_txed=0 
-        # number of retransmitted ARQ packets                          
-        self.arq_retxed=0  
-        # number of failed ARQ retransmissions                              
+        self.arq_pkts_txed=0
+        # number of retransmitted ARQ packets
+        self.arq_retxed=0
+        # number of failed ARQ retransmissions
         self.failed_arq=0
         # maximum number of retransmission attempts
         self.max_attempts=max_attempts
@@ -280,14 +280,14 @@ class llsr_mac(gr.basic_block):
         # initial channel state
         self.CHANNEL_state=CHANNEL_IDLE
         # packet number expected in an ack
-        self.expected_ack=-1  
+        self.expected_ack=-1
         # retransmission timeout
         self.timeout=timeout
         # time of transmission
-        self.time_of_tx=0.0  
+        self.time_of_tx=0.0
         # time of last transmission
         self.last_tx_time = None
-        # True whe exponential backoff is enbaled                          
+        # True whe exponential backoff is enbaled
         self.exp_backoff=exp_backoff
         # random factor used in backoff calculation
         self.backoff_randomness=backoff_randomness
@@ -298,7 +298,7 @@ class llsr_mac(gr.basic_block):
 	self.mgmt_queue = Queue.Queue()
 	# queue of mgmt resp packets waiting to be transmitted
 	self.mgmt_resp_queue = Queue.Queue()
-	# number of mgmt pkt 
+	# number of mgmt pkt
 	self.mgmt_track=0
 	# number of expected mgmt pkt
 	self.mgmt_expected_ack=-1
@@ -346,46 +346,46 @@ class llsr_mac(gr.basic_block):
             # no!
             self.hc=255 # hop count, 255=infinity
             self.pq=0 # path quality, 0=not connected to sink
-            self.next_hop=UNDEF_ADDR # 255=undefined	
+            self.next_hop=UNDEF_ADDR # 255=undefined
         # -------------------------------------------------
         # message i/o for radio interface
         self.message_port_register_out(pmt.intern('to_radio'))
         self.message_port_register_in(pmt.intern('from_radio'))
-        self.set_msg_handler(pmt.intern('from_radio'), self.radio_rx)  
+        self.set_msg_handler(pmt.intern('from_radio'), self.radio_rx)
         # message i/o for app interface
         self.message_port_register_out(pmt.intern('to_app'))
         self.message_port_register_in(pmt.intern('from_app'))
         self.set_msg_handler(pmt.intern('from_app'), self.app_rx)
         self.message_port_register_in(pmt.intern('from_app_arq'))
-        self.set_msg_handler(pmt.intern('from_app_arq'), self.app_rx_arq) 
+        self.set_msg_handler(pmt.intern('from_app_arq'), self.app_rx_arq)
         # message i/o for ctrl interface
         self.message_port_register_out(pmt.intern('ctrl_out'))
         self.message_port_register_in(pmt.intern('ctrl_in'))
         self.set_msg_handler(pmt.intern('ctrl_in'), self.ctrl_rx)
-    
+
     # ------------------------------------------
     # debug info print out
     # ------------------------------------------
-    def DebugInfoPrinting(self, outputype, debugtype, debugmsg, *args):
-	output = None	
+    def DebugInfoPrinting(self, debugtype, outputype, debugmsg, *args):
+	output = None
 	if args:
 	   output=debugmsg.format(*args)
 	else:
 	   output=debugmsg
 	if output is not None:
 	# infotype 1 is essential
-	   if self.debug_info == 0 and outputype == 0:
+	   if self.debug_info == 0:
 	     if debugtype == 0:
 	     	sys.stderr.write(output)
 		sys.stderr.flush()
 	     if debugtype == 1:
 		sys.stdout.write(output)
 		sys.stdout.flush()
-	   if self.debug_info == 0 and outputype == 1:
+	   if self.debug_info == 1 and outputype == 1:
 	     return
 	else:
 	   return
-	
+
     def get_rx_byte_count(self):
         return self.rx_byte_count
 
@@ -431,9 +431,9 @@ class llsr_mac(gr.basic_block):
             self.hc=255 # infinity
             self.pq=0 # not connected to sink
             self.next_hop=UNDEF_ADDR
-        if self.debug_stderr: 
+        if self.debug_stderr:
            # log the packet
-           self.DebugInfoPrinting(0, 0, "in SelectNextHop(): addr: {0}, hc: {1}, pq: {2}, next hop: {3}\n", self.addr, self.hc, self.pq, self.next_hop)
+           self.DebugInfoPrinting(1, 0, "Node {0}: in SelectNextHop(): hc: {1}, pq: {2}, next hop: {3}\n", self.addr, self.hc, self.pq, self.next_hop)
            #sys.stderr.write("in SelectNextHop(): addr: %d, hc: %d, pq: %d, next hop: %d\n" % (self.addr,self.hc,self.pq,self.next_hop))
 #	self.DebugInfoPrinting(self, 1, "Node {0}: in SelectNextHop(): hc: {1}, pq: {2}, next hop: {3}\n", self.addr, self.hc, self.pq, self.next_hop)
 
@@ -442,37 +442,42 @@ class llsr_mac(gr.basic_block):
     # ----------------------------------
     def print_beacon_pkt(self, pkt):
         # valid beacon packet length?
-        if (len(pkt)!=BEACON_PKT_LENGTH): 
+        if (len(pkt)!=BEACON_PKT_LENGTH):
             # yes!
-            sys.stderr.write("in print_beacon_pkt(): beacon packet invalid length!\n")
+            self.DebugInfoPrinting(0, 0, "Node {0}: in print_beacon_pkt(): beacon packet invalid length {1}!\n", self.addr, len(pkt))
+            #sys.stderr.write("in print_beacon_pkt(): beacon packet invalid length!\n")
             return
         # no!
         # print protocol id
-        sys.stderr.write("PROT ID: %d " % pkt[PKT_PROT_ID])
+	self.DebugInfoPrinting(1, 0, "PROT ID: {0} ", pkt[PKT_PROT_ID])
+        #sys.stderr.write("PROT ID: %d " % pkt[PKT_PROT_ID])
         # print source address
-        sys.stderr.write("SRC: %d " % pkt[PKT_SRC])
+	self.DebugInfoPrinting(1, 0, "SRC: {0} ", pkt[PKT_SRC])
+        #sys.stderr.write("SRC: %d " % pkt[PKT_SRC])
         # print hop count
-        sys.stderr.write("HC: %d " % pkt[PKT_HC])
+	self.DebugInfoPrinting(1, 0, "HC: {0}", pkt[PKT_HC])
+        #sys.stderr.write("HC: %d " % pkt[PKT_HC])
         # print path quality
-        sys.stderr.write("PQ: %d\n" % pkt[PKT_PQ])
-    
+	self.DebugInfoPrinting(1, 0, "PQ: {0}\n", pkt[PKT_PQ])
+        #sys.stderr.write("PQ: %d\n" % pkt[PKT_PQ])
     # ------------------------
     # transmit a beacon packet
     # ------------------------
-    def send_beacon_pkt(self): 	
+    def send_beacon_pkt(self):
         # beacon packet structure
         data = [BEACON_PROTO,self.addr,self.hc,self.pq]
         # debug mode enabled?
         if self.debug_stderr: # Yes!
            # log the packet
-           sys.stderr.write("%d:in send_beacon_pkt(): sending beacon packet:\n" % self.addr)
-           self.print_beacon_pkt(data)      
+	   self.DebugInfoPrinting(1, 0, "Node {0}: in send_beacon_pkt(): sending beacon packet:\n", self.addr)
+           #sys.stderr.write("%d:in send_beacon_pkt(): sending beacon packet:\n" % self.addr)
+           self.print_beacon_pkt(data)
         # conversion to PMT PDU (meta data, data)
         pdu = pmt.cons( \
             pmt.to_pmt({}), \
             pmt.init_u8vector(len(data), data))
         # push to radio msg port
-        self.message_port_pub(pmt.intern('to_radio'),pdu)      
+        self.message_port_pub(pmt.intern('to_radio'),pdu)
         # save current transmit time
         with self.lock:
             self.last_tx_time = time.time()
@@ -482,20 +487,26 @@ class llsr_mac(gr.basic_block):
     # --------------------------------------------
     def print_ack_pkt(self, pkt):
         # valid beacon packet length?
-        if (len(pkt)!=ACK_PKT_LENGTH): 
+        if (len(pkt)!=ACK_PKT_LENGTH):
            # yes!
-           sys.stderr.write("in print_beacon_pkt(): ack packet invalid length!\n")
+           self.DebugInfoPrinting(0, 0, "Node {0}: in print_beacon_pkt(): ack packet invalid length! {1}!\n", self.addr, len(pkt))
+           #sys.stderr.write("in print_beacon_pkt(): ack packet invalid length!\n")
            return
         # no! print protocol id
-        sys.stderr.write("PROT ID: %d " % pkt[PKT_PROT_ID])
+        #sys.stderr.write("PROT ID: %d " % pkt[PKT_PROT_ID])
+	self.DebugInfoPrinting(1, 0, "PROT ID: {0} ", pkt[PKT_PROT_ID])
         # print source address
-        sys.stderr.write("SRC: %d " % pkt[PKT_SRC])
+        #sys.stderr.write("SRC: %d " % pkt[PKT_SRC])
+	self.DebugInfoPrinting(1, 0, "SRC: {0} ", pkt[PKT_SRC])
         # print destination address
-        sys.stderr.write("DEST: %d " % pkt[PKT_DEST])
+        #sys.stderr.write("DEST: %d " % pkt[PKT_DEST])
+	self.DebugInfoPrinting(1, 0, "DEST: {0} ", pkt[PKT_DEST])
         # print packet count
-        sys.stderr.write("CNT: %d " % pkt[PKT_CNT])
+        #sys.stderr.write("CNT: %d " % pkt[PKT_CNT])
+	self.DebugInfoPrinting(1, 0, "CNT: {0} ", pkt[PKT_CNT])
 	# print protocol using the ack
-	sys.stderr.write("ACK for PROT: %d \n" % pkt[PROTO_ACK])
+	#sys.stderr.write("ACK for PROT: %d \n" % pkt[PROTO_ACK])
+	self.DebugInfoPrinting(1, 0, "ACK for PROT: {0}\n", pkt[PROTO_ACK])
 
     # ---------------------------------------------
     # transmit ack packet
@@ -519,16 +530,16 @@ class llsr_mac(gr.basic_block):
         # save current transmit time
         with self.lock:
             self.last_tx_time = time.time()
-    
+
     # ------------------------------------------
-    # transmit a packet with the no ARQ protocol  
-    # ------------------------------------------  
+    # transmit a packet with the no ARQ protocol
+    # ------------------------------------------
     def tx_no_arq(self, pdu_tuple, protocol_id):
         # send the packet
         self.send_pkt_radio(pdu_tuple,self.pkt_cnt,protocol_id,NO_ARQ)
         # increment packet number
         self.pkt_cnt=(self.pkt_cnt+1) % 256
-    
+
     # --------------------------------
     # pretty printing of a data packet
     # --------------------------------
@@ -553,30 +564,30 @@ class llsr_mac(gr.basic_block):
            sys.stderr.write("DATA: ")
            for i in range (PKT_MIN,len(pkt)):
                sys.stderr.write("%d " % pkt[i])
-           sys.stderr.write("\n") 
-    
+           sys.stderr.write("\n")
+
     # ---------------------------------------------------------
     # Transmit a data packet
     # pdu_tuple = PDU pair (payload,meta data)
     # pkt_cnt = packet number
-    # protocol_id in { ARQ_PROTO, DATA_PROTO, BEACON_PROTO } 
+    # protocol_id in { ARQ_PROTO, DATA_PROTO, BEACON_PROTO }
     # control in { ARQ, NO_ARQ }
     # ---------------------------------------------------------
-    def send_pkt_radio(self, pdu_tuple, pkt_cnt, protocol_id, control): 
+    def send_pkt_radio(self, pdu_tuple, pkt_cnt, protocol_id, control):
         # connected to sink?
         if self.pq==0:
             # no! drop the packet
-            if self.debug_stderr: 
+            if self.debug_stderr:
                 sys.stderr.write("%d:in send_pkt_radio(): packet dropped (not connected)\n" %
-                    self.addr) 
-            return  
+                    self.addr)
+            return
         # packet to self?
         if self.addr==self.next_hop:
             # no! drop the packet
-            if self.debug_stderr: 
+            if self.debug_stderr:
                 sys.stderr.write("%d:in send_pkt_radio(): packet dropped (packet to self)\n" %
-                    self.addr) 
-            return  
+                    self.addr)
+            return
         # yes! data packet header structure
         data = [protocol_id,self.addr,self.next_hop,pkt_cnt,control]
         # add payload
@@ -602,7 +613,7 @@ class llsr_mac(gr.basic_block):
         # save current transmit time
         with self.lock:
             self.last_tx_time = time.time()
-    
+
     # --------------------------------------------
     # transmit a data packet with the ARQ protocol
     # --------------------------------------------
@@ -610,14 +621,14 @@ class llsr_mac(gr.basic_block):
         # send the packet
         self.send_pkt_radio(pdu_tuple, self.pkt_cnt, protocol_id, ARQ)
         # increment packet number
-        self.pkt_cnt=(self.pkt_cnt+1) % 256 
+        self.pkt_cnt=(self.pkt_cnt+1) % 256
 
     # --------------------------------------------
     # transmit a data packet with the ARQ protocol
     # --------------------------------------------
     def retx_arq(self, pdu_tuple, protocol_id):
         # send the packet
-        self.send_pkt_radio(pdu_tuple, self.pkt_cnt-1 if self.pkt_cnt != 0 else 255, protocol_id, ARQ)  
+        self.send_pkt_radio(pdu_tuple, self.pkt_cnt-1 if self.pkt_cnt != 0 else 255, protocol_id, ARQ)
     # ------------------------
     # push data to application
     # ------------------------
@@ -632,7 +643,7 @@ class llsr_mac(gr.basic_block):
         for i in range (0,len(pdu_tuple[0])):
             sys.stdout.write("%d " % pdu_tuple[0][i])
         sys.stdout.write("\n")
-	sys.stdout.flush() 
+	sys.stdout.flush()
 
     # -----------------------------------
     # scan and update the node dictionary
@@ -659,7 +670,7 @@ class llsr_mac(gr.basic_block):
                 if self.debug_stderr:
                     sys.stderr.write("in check_nodes(): link lost with node: %d\n" %\
                          k)
-    
+
     # -------------------------------
     # Handle a message from the radio
     # -------------------------------
@@ -672,7 +683,7 @@ class llsr_mac(gr.basic_block):
             if self.debug_stderr:
                 #log the error
                 sys.stderr.write("in radio_rx(): message is not a PDU\n")
-            return    
+            return
         # data is a vector of unsigned chars?
         if pmt.is_u8vector(data):
             data = pmt.u8vector_elements(data)
@@ -686,24 +697,24 @@ class llsr_mac(gr.basic_block):
         if not (type(meta_dict) is dict):
             meta_dict = {}
         # Get exclusive access
-        with self.lock: 
+        with self.lock:
             self._radio_rx(data, meta_dict)
-    
+
     # ------------------------------------------------------------
     # Handle a message from the radio, exclusive access is assumed
     # data = message content
     # meta_dict = dictionary of meta data, in Python type
     # ------------------------------------------------------------
-    def _radio_rx(self, data, meta_dict):  
+    def _radio_rx(self, data, meta_dict):
         # check msg size
 	if len(data) < 1:
 	   if self.debug_stderr:
 	       sys.stderr.write("in _radio_rx(): message size 0\n")
-           return	
+           return
         # valid protocol ID?
         if not data[PKT_PROT_ID] in [ARQ_PROTO,DATA_PROTO,BEACON_PROTO,MGMT_PROTO,MGMT_RESP_PROTO]:
             # no! log the error
-            if self.debug_stderr: 
+            if self.debug_stderr:
                 sys.stderr.write("in _radio_rx(): invalid protocol ID: %d\n" % \
                     (data[PKT_PROT_ID]))
         # valid packet length?
@@ -713,13 +724,13 @@ class llsr_mac(gr.basic_block):
 	   (data[PKT_PROT_ID]==MGMT_RESP_PROTO and len(data)!=MGMT_RESP_LENGTH) or \
            (data[PKT_PROT_ID]==BEACON_PROTO and len(data) != BEACON_PKT_LENGTH):
             # no! log the error
-            if self.debug_stderr: 
+            if self.debug_stderr:
                 sys.stderr.write("in _radio_rx(): invalid packet length: %d\n" % \
                 (len(data)))
             # do nothing!
             return
         # debug mode enabled?
-        if self.debug_stderr: 
+        if self.debug_stderr:
             # log the packet!
             sys.stderr.write("%d:in _radio_rx(): receiving packet:\n" % self.addr)
             if data[PKT_PROT_ID]==ARQ_PROTO:
@@ -733,7 +744,7 @@ class llsr_mac(gr.basic_block):
 	    elif data[PKT_PROT_ID]==MGMT_RESP_PROTO:
 		self.print_mgmt_resp_pkt(data)
         # save source address in dictionary of meta data
-        meta_dict['EM_SRC_ID'] = data[PKT_SRC]       
+        meta_dict['EM_SRC_ID'] = data[PKT_SRC]
         # packet from self?
         if data[PKT_SRC]==self.addr:
             # debug mode enabled?
@@ -741,7 +752,7 @@ class llsr_mac(gr.basic_block):
                 # yes! log the error
                 sys.stderr.write("%d:in _radio_rx(): heard myself\n" % self.addr)
             # do nothing!
-            return  
+            return
         # update received byte count
         self.rx_byte_count += len(data)
 	# ------------------------
@@ -764,7 +775,7 @@ class llsr_mac(gr.basic_block):
 		   self.snmpmgmttable.addRow(self.createdefaultNewrow(data[PKT_SRC]))
 	           if self.debug_stderr:
 		      sys.stderr.write("SNMP_Table Size: %d, Added new Node: %d \n" %\
-		      (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))           
+		      (self.snmpmgmttable.getTableSize(), self.snmpmgmttable.getColumn(-1, 'nodeAddr')))
             # debug mode enabled?
             if self.debug_stderr:
                 sys.stderr.write("%d:in _radio_rx(): node %d is alive\n" % \
@@ -776,19 +787,19 @@ class llsr_mac(gr.basic_block):
         # ack or data packet destined to self?
         #if data[PKT_PROT_ID]!= MGMT_PROTO and data[PKT_DEST]!=self.addr:
             # no! done!
-           # return   
+           # return
 	# ----------------------
         # data packet processing
         # ----------------------
         if data[PKT_PROT_ID]==DATA_PROTO:
             # valid control field?
             if not data[PKT_CTRL] in [ARQ, NO_ARQ]:
-                # no! log the error	
+                # no! log the error
                 if self.debug_stderr:
-                    sys.stderr.write("%d:in _radio_rx(): bad control field: %d\n" % 
+                    sys.stderr.write("%d:in _radio_rx(): bad control field: %d\n" %
                          (self.addr,data[PKT_CTRL]))
                 # do nothing!
-                return      
+                return
             # is the ARQ protocol used?
             new_packet=False
             if data[PKT_CTRL]==ARQ:
@@ -796,14 +807,14 @@ class llsr_mac(gr.basic_block):
 		#if self.nodes[data[PKT_SRC]]:
 		if data[PKT_SRC] in self.nodes.keys():
                         # last packet number and new packet number different?
-			new_packet=self.nodes[data[PKT_SRC]].lpn!=data[PKT_CNT] 
+			new_packet=self.nodes[data[PKT_SRC]].lpn!=data[PKT_CNT]
 			# save last packet number from that neighbor
                 	self.nodes[data[PKT_SRC]].setLpn(data[PKT_CNT])
                         # yes! send an acknowledgement
                         self.send_ack(data[PKT_SRC], data[PKT_CNT],data[PKT_PROT_ID])
 		else:
 		    if self.debug_stderr:
-		       sys.stderr.write("%d:in_radio_rx(): data from unknown neighbour" % self.addr) 
+		       sys.stderr.write("%d:in_radio_rx(): data from unknown neighbour" % self.addr)
 	    #  ARQ protocol not used or packet is new
             if data[PKT_CTRL]==NO_ARQ or new_packet:
                 # this node is a sink?
@@ -822,8 +833,8 @@ class llsr_mac(gr.basic_block):
         # ----------------------------------------
         if data[PKT_PROT_ID]==MGMT_PROTO:
 	    message=[]
-	    temp={}	    
-	    # check if the packet is a old packet 
+	    temp={}
+	    # check if the packet is a old packet
 	    if not data[MGMT_ORG] in self.lasttrack:
 	       self.lasttrack.update({data[MGMT_ORG]:{data[MGMT_TRACK]:time.time()}})
 	    else:
@@ -832,23 +843,23 @@ class llsr_mac(gr.basic_block):
 	         temp.update({data[MGMT_TRACK]:time.time()})
 	         self.lasttrack.update({data[MGMT_ORG]:temp})
 	      else:
-	         if self.debug_stderr: 
+	         if self.debug_stderr:
 		    sys.stderr.write("%d: Receive former mgmt packet, drop" % self.addr)
-	         return         
+	         return
 	    self.send_ack(data[PKT_SRC], data[MGMT_TRACK], data[PKT_PROT_ID])
             # this node is the destination
             if self.addr==data[MGMT_DEST]:
 	       checkload=[data[PKT_PROT_ID]]+list(data[2:8])
 	       if self.checkhash(checkload, data[MGMT_HASH])==False:
 		  self._mgmt_resp_rx(self.mgmt_resp_pdu(1, data[MGMT_TRACK], 3))
-	          if self.debug_stderr: 
+	          if self.debug_stderr:
 		     sys.stderr.write("%d: MGMT TRACK:Hash Wrong\n" % self.addr)
 	          return
                else:# yes! processing
                   message=self.agent(data[MGMT_OPT],data[MGMT_OID],data[MGMT_VAL])
-		  self._mgmt_resp_rx(self.mgmt_resp_pdu(message[0], data[MGMT_TRACK], message[1]))            
+		  self._mgmt_resp_rx(self.mgmt_resp_pdu(message[0], data[MGMT_TRACK], message[1]))
             # else, if the packet is not for this node
-            else:   	 			    
+            else:
                self._mgmt_rx(self.pdupacker(data[MGMT_MIN:MGMT_PKT_LENGTH]))
             return
 	# ----------------------
@@ -860,14 +871,14 @@ class llsr_mac(gr.basic_block):
 	    #if self.nodes[data[PKT_SRC]]:
 	    if data[PKT_SRC] in self.nodes.keys():
                # last packet number and new packet number different?
-	       new_packet=self.nodes[data[PKT_SRC]].lpn!=data[PKT_CNT] 
+	       new_packet=self.nodes[data[PKT_SRC]].lpn!=data[PKT_CNT]
 	       # save last packet number from that neighbor
                self.nodes[data[PKT_SRC]].setLpn(data[PKT_CNT])
                # yes! send an acknowledgement
                self.send_ack(data[PKT_SRC], data[PKT_CNT],data[PKT_PROT_ID])
 	    else:
 		# the packet from an unknown source
-	       if self.debug_stderr: 
+	       if self.debug_stderr:
 		  sys.stderr.write("%d: Receive a mgmt resp packet from unknown source %d\n" % (self.addr, data[PKT_SRC]))
 	       return
 	    #  packet is new
@@ -879,45 +890,45 @@ class llsr_mac(gr.basic_block):
                 # else, forward to next hop
                 else:
                     self._mgmt_resp_rx(self.pdupacker(data[MGMT_RESP_MIN:]))
-            return	
+            return
 	# ---------------------
         # ack packet processing
-        # ---------------------  
+        # ---------------------
         if data[PKT_PROT_ID]==ARQ_PROTO:
             # channel idle?
             if self.addr==data[PKT_DEST] and self.CHANNEL_state==CHANNEL_IDLE:
 		# data packet arq
 		if data[PROTO_ACK]==DATA_PROTO:
 		   # yes! in debug mode?
-		   if self.debug_stderr: 
+		   if self.debug_stderr:
 		      sys.stderr.write("%d:in _radio_rx(): got data ack %d while idle\n" % \
 		      (self.addr,data[PKT_CNT]))
 		   return
 		# mgmt packet
 		elif data[PROTO_ACK]==MGMT_PROTO:
 	           # yes! in debug mode?
-		   if self.debug_stderr: 
+		   if self.debug_stderr:
 		      sys.stderr.write("%d:in _radio_rx(): got mgmt ack %d while idle\n" % \
 		      (self.addr,data[PKT_CNT]))
 		   return
 		# mgmt resp packet
 		elif data[PROTO_ACK]==MGMT_RESP_PROTO:
 	           # yes! in debug mode?
-		   if self.debug_stderr: 
+		   if self.debug_stderr:
 		      sys.stderr.write("%d:in _radio_rx(): got mgmt resp ack %d while idle\n" % \
 		      (self.addr,data[PKT_CNT]))
 		   return
             # channel is busy! received expected acknowlegement number?
             elif self.addr==data[PKT_DEST] and self.CHANNEL_state==CHANNEL_BUSY:
 		if data[PROTO_ACK]==DATA_PROTO:
-		   if data[PKT_CNT]==self.expected_ack: 
+		   if data[PKT_CNT]==self.expected_ack:
                       # transition to idle state
                       self.CHANNEL_state=CHANNEL_IDLE
-                      if self.debug_stderr: 
+                      if self.debug_stderr:
                          sys.stderr.write("%d:in _radio_rx(): got data ack: %d and recover to IDLE\n" % \
                          (self.addr,data[PKT_CNT]))
                    else:
-                      if self.debug_stderr: 
+                      if self.debug_stderr:
                          sys.stderr.write("%d:in _radio_rx(): bad data ack %d (exp.: %d)\n" % \
                          (self.addr,data[PKT_CNT], self.expected_ack))
                       return
@@ -947,7 +958,7 @@ class llsr_mac(gr.basic_block):
 			return
             # run the protocol finite state machine
             self.run_fsm()
-            return 
+            return
     # ---------------------------------------------------
     # Handle a message from the application, ARQ not used
     # ---------------------------------------------------
@@ -955,7 +966,7 @@ class llsr_mac(gr.basic_block):
       if len(self.nodes)>0:
         with self.lock:
             self._app_rx(msg, False)
-    
+
     # ---------------------------------------------------
     # Handle a message from the application, ARQ is used
     # ---------------------------------------------------
@@ -975,34 +986,34 @@ class llsr_mac(gr.basic_block):
             data=pmt.cdr(msg)
         except:
             # wrong structure!
-            if self.debug_stderr: 
+            if self.debug_stderr:
                 sys.stderr.write("in _app_rx(): message is not a PDU\n")
             # do nothing!
-            return 
+            return
         # is data a vector of unsigned chars?
         if pmt.is_u8vector(data):
             # yes! convert to python data type
             data=pmt.u8vector_elements(data)
         else:
             # no!
-            if self.debug_stderr: 
+            if self.debug_stderr:
                 sys.stderr.write("in _app_rx(): data is not a u8vector\n")
             # do nothing!
-            return   
+            return
         # convert meta data to a Python dictionary
         meta_dict=pmt.to_python(meta)
         if not (type(meta_dict) is dict):
-            meta_dict={}   
+            meta_dict={}
         # push the packet
         self.dispatch_app_rx(data,meta_dict,arq)
 
     # --------------------------------------------------------
-    # Push a packet 
+    # Push a packet
     # data = packet
     # meta_dict = meta dictionary
     # arq = True when ARQ protocol is selected, False otherwise
     # --------------------------------------------------------
-    def dispatch_app_rx(self, data, meta_dict,arq): 
+    def dispatch_app_rx(self, data, meta_dict,arq):
         # ARQ selected?
         if arq:
             # transmit with the ARQ protocol!
@@ -1015,7 +1026,7 @@ class llsr_mac(gr.basic_block):
         else:
             # transmit with the no ARQ protocol!
             self.tx_no_arq((data, meta_dict), DATA_PROTO)
-    
+
     # ----------------------------------------------------------
     # Handle a control signal
     # Handler triggered on a periodic basis by a Message Strobe.
@@ -1031,38 +1042,38 @@ class llsr_mac(gr.basic_block):
                     (time.time() - self.last_tx_time) >= \
                      self.broadcast_interval*2*random.random()): # randomization
                     # send a hello message
-                    self.send_beacon_pkt() 
-            # update the neighbor dictionary 
+                    self.send_beacon_pkt()
+            # update the neighbor dictionary
             self.check_nodes()
-	    # check if the manager is online and handle a snmp request 
+	    # check if the manager is online and handle a snmp request
 	    if self.addr == SINK_ADDR:
-	       self._snmpManager.handle_request()  
+	       self._snmpManager.handle_request()
 	    # send IN-BAND mgmt pkt if queue is not empty
 	    if self.addr == SINK_ADDR:
 	       while self.snmpmgmttable.pktforsent.qsize()!=0:
-	          self.mgmt_rx(self.snmpmgmttable.pktforsent.get())	
-            # run the protocol FSM	
-            self.run_fsm() 
-    # ---------------------------------------   
+	          self.mgmt_rx(self.snmpmgmttable.pktforsent.get())
+            # run the protocol FSM
+            self.run_fsm()
+    # ---------------------------------------
     # ARQ protocol Finite State Machine (FSM)
     # ---------------------------------------
     def run_fsm(self):
         # conected to sink?
         if self.pq==0: # no!
-           if self.debug_stderr: 
+           if self.debug_stderr:
               sys.stderr.write("FSM init: %d:in run_fsm(): not connected!\n" % self.addr)
             # do nothing!
            return
         # IDLE state
         # ----------
-        if self.CHANNEL_state==CHANNEL_IDLE: 
+        if self.CHANNEL_state==CHANNEL_IDLE:
            # A mgmt resp packet queued for transmission?
-           if not self.mgmt_resp_queue.empty(): 
+           if not self.mgmt_resp_queue.empty():
                 # get the packet
                 self.arq_pdu_tuple=self.mgmt_resp_queue.get()
-                # save the current packet number 
-                self.expected_ack=self.pkt_cnt 
-                if self.debug_stderr: 
+                # save the current packet number
+                self.expected_ack=self.pkt_cnt
+                if self.debug_stderr:
                    sys.stderr.write("%d:in run_fsm(): sending management resp packet %d\n" % \
                    (self.addr,self.pkt_cnt))
                 # record packet type
@@ -1072,7 +1083,7 @@ class llsr_mac(gr.basic_block):
 		if self.debug_stderr:
 		   sys.stderr.write("pkttype:%d\n" % self.pkttype)
                 # save the transmission time
-                self.time_of_tx=time.time() 
+                self.time_of_tx=time.time()
                 # transition to the busy state
                 self.CHANNEL_state=CHANNEL_BUSY
                 # update the transmitted packet count
@@ -1082,7 +1093,7 @@ class llsr_mac(gr.basic_block):
                 # determine the new backoff percentage
                 self.next_random_backoff_percentage = self.backoff_randomness * random.random()
            # A mgmt packet queued for transmission?
-	   elif not self.mgmt_queue.empty(): 
+	   elif not self.mgmt_queue.empty():
 	        self.arq_pdu_tuple=self.mgmt_queue.get()
 		self.mgmt_expected_ack=self.mgmt_track
 	        if self.debug_stderr:
@@ -1094,7 +1105,7 @@ class llsr_mac(gr.basic_block):
 		self.mgmt_tx(self.arq_pdu_tuple)
 		if self.debug_stderr:
 		   sys.stderr.write("pkttype:%d\n" % self.pkttype)
-		self.time_of_tx=time.time() 
+		self.time_of_tx=time.time()
                 # transition to the busy state
                 self.CHANNEL_state=CHANNEL_BUSY
                 # update the transmitted packet count
@@ -1104,12 +1115,12 @@ class llsr_mac(gr.basic_block):
                 # determine the new backoff percentage
                 self.next_random_backoff_percentage = self.backoff_randomness * random.random()
 	    # A data packet queued for transmission?
-           elif not self.queue.empty(): 
+           elif not self.queue.empty():
                 # get the packet
                 self.arq_pdu_tuple=self.queue.get()
-                # save the current packet number 
-                self.expected_ack=self.pkt_cnt 
-                if self.debug_stderr: 
+                # save the current packet number
+                self.expected_ack=self.pkt_cnt
+                if self.debug_stderr:
                    sys.stderr.write("%d:in run_fsm(): sending data packet %d\n" % \
                    (self.addr,self.pkt_cnt))
                 # record packet type
@@ -1119,7 +1130,7 @@ class llsr_mac(gr.basic_block):
 		if self.debug_stderr:
 		   sys.stderr.write("pkttype:%d\n" % self.pkttype)
                 # save the transmission time
-                self.time_of_tx=time.time() 
+                self.time_of_tx=time.time()
                 # transition to the busy state
                 self.CHANNEL_state=CHANNEL_BUSY
                 # update the transmitted packet count
@@ -1128,20 +1139,20 @@ class llsr_mac(gr.basic_block):
                 self.retries=0
                 # determine the new backoff percentage
                 self.next_random_backoff_percentage = self.backoff_randomness * random.random()
-	   	 
+
         # BUSY state
         # ----------
-        if self.CHANNEL_state==CHANNEL_BUSY: 
+        if self.CHANNEL_state==CHANNEL_BUSY:
             # timeout?
             if self.exp_backoff:
                 backedoff_timeout=self.timeout * (2**self.retries)
             else:
                 backedoff_timeout=self.timeout * (self.retries + 1)
-            backedoff_timeout*=(1.0 + self.next_random_backoff_percentage) 
+            backedoff_timeout*=(1.0 + self.next_random_backoff_percentage)
             if (time.time() - self.time_of_tx) > backedoff_timeout:
                 # maximum number of retries reached?
-                if self.retries==self.max_attempts:            
-                    if self.debug_stderr: 
+                if self.retries==self.max_attempts:
+                    if self.debug_stderr:
                         sys.stderr.write("%d: in run_fsm(): ARQ failed after %d attempts\n" % \
                         (self.addr, self.retries))
                     # reset the retry count
@@ -1149,21 +1160,21 @@ class llsr_mac(gr.basic_block):
                     # transition to the idle state
                     self.CHANNEL_state=CHANNEL_IDLE
                     # update the failed transmitted packet count
-                    self.failed_arq+=1 
+                    self.failed_arq+=1
 		    if self.addr!=SINK_ADDR and self.pkttype==1:
 			# track number problem
-			resppdu=self.mgmt_resp_pdu(1, self.mgmt_track-1 if self.mgmt_track != 0 else 255, 2)		        
+			resppdu=self.mgmt_resp_pdu(1, self.mgmt_track-1 if self.mgmt_track != 0 else 255, 2)
 			self._mgmt_resp_rx(resppdu)
 			if self.debug_stderr:
 			   sys.stderr.write("%d: No arq pkt receive. Warning: this node is on the edge of the network and mgmt_pkt not reach the dest\n" % self.addr)
-			   sys.stderr.write("%d: sending error message to sink node\n" % self.addr)		
+			   sys.stderr.write("%d: sending error message to sink node\n" % self.addr)
                 # retry transmission!
                 else:
                     # increment retry count
                     self.retries+=1
                     time_now=time.time()
                     # re-transmit the packet
-                    if self.debug_stderr: 
+                    if self.debug_stderr:
                         sys.stderr.write("%d: CHANNEL-BUSYin run_fsm(): retransmission after %d retries\n" % \
                         (self.addr, self.retries))
 			sys.stderr.write("current retransmission pkttype: %d\n" % self.pkttype)
@@ -1181,19 +1192,19 @@ class llsr_mac(gr.basic_block):
                     # increment the packet retransmission count
                     self.arq_retxed+=1
 
-    # ---------------------------------------   
-    # Network Management Function 
     # ---------------------------------------
-    
+    # Network Management Function
+    # ---------------------------------------
+
     # ---------------------------------------
     # OUT-BAND Management
     # ---------------------------------------
     # ------------------------------
     # createNewrow
-    # ------------------------------   
+    # ------------------------------
     def createdefaultNewrow(self, addr):
 	timestamp=self._GetUTCTime()
-	return {'nodeAddr':addr, 'maxAttempts':self.max_attempts, 
+	return {'nodeAddr':addr, 'maxAttempts':self.max_attempts,
 		'broadcastInterval':self.broadcast_interval, 'mgmtMode':self.mgmtMode,
 		 'lastUpdated':'nodeAddr', 'lastUpdatedTime':timestamp, 'mgmtInfo':0}
 
@@ -1207,7 +1218,7 @@ class llsr_mac(gr.basic_block):
         # print data
         for i in range (0,len(data)):
             sys.stdout.write("%d " % data[i])
-        sys.stdout.write("\n") 
+        sys.stdout.write("\n")
 
     #--------IN-BAND Management PKT DOWNward Passing--------
     #--MGMT_APP Passing Format: VALUE|DEST|OPT|OID--
@@ -1219,7 +1230,7 @@ class llsr_mac(gr.basic_block):
     # msg is a pdu
     def mgmt_rx(self, msg):
        # SINK will not flush down the mgmt packet unless there exists neighbour nodes
-       # May need adding extra procedure to ask app for resend 
+       # May need adding extra procedure to ask app for resend
        # if the network is not ready
        temp={}
        if len(self.nodes)>0:
@@ -1231,19 +1242,19 @@ class llsr_mac(gr.basic_block):
 		temp=self.lasttrack[self.addr]
 	        temp.update({self.mgmt_track:time.time()})
 	        self.lasttrack.update({self.addr:temp})
-                self._mgmt_rx(msg)	
+                self._mgmt_rx(msg)
 
     # ---------------------------------------
     # Handle a message from the SNMP command
-    # msg = message from the management app 
-    # ---------------------------------------  
+    # msg = message from the management app
+    # ---------------------------------------
     def _mgmt_rx(self, msg):
 	try:
 	    meta=pmt.car(msg)
 	    data=pmt.cdr(msg)
 	except:
 	    if self.debug_stderr:
-		sys.stderr.write("%d: in _mgmt_rx(): MGMT message is not a PDU \n" % self.addr) 		    
+		sys.stderr.write("%d: in _mgmt_rx(): MGMT message is not a PDU \n" % self.addr)
 	    return
 	if pmt.is_u8vector(data):
 	    data=pmt.u8vector_elements(data)
@@ -1257,11 +1268,11 @@ class llsr_mac(gr.basic_block):
 	self.dispatch_mgmt_rx(data,meta_dict)
 
     # --------------------------------------------------------
-    # Push a mgmt packet 
+    # Push a mgmt packet
     # data = mgmt packet
     # meta_dict = meta dictionary
     # --------------------------------------------------------
-    def dispatch_mgmt_rx(self, data, meta_dict): 
+    def dispatch_mgmt_rx(self, data, meta_dict):
         if self.mgmt_queue.qsize()>=self.max_queue_size:
            self.mgmt_queue.get()
         self.mgmt_queue.put((data, meta_dict))
@@ -1290,10 +1301,10 @@ class llsr_mac(gr.basic_block):
         # connected to sink?
         if self.pq==0:
             # no! drop the packet
-            if self.debug_stderr: 
+            if self.debug_stderr:
                 sys.stderr.write("%d:in send_mgmt_pkt_radio(): packet dropped (not connected)\n" %
-                    self.addr) 
-            return  	
+                    self.addr)
+            return
         data=[MGMT_PROTO, self.addr, mgmt_track]
 	# if sink add orginal sender address (Done Once)
 	if self.addr==SINK_ADDR:
@@ -1334,7 +1345,7 @@ class llsr_mac(gr.basic_block):
 
     # ---------------------------------------------------------
     # Print a mgmt pkt
-    # ---------------------------------------------------------	
+    # ---------------------------------------------------------
     def print_mgmt_pkt(self, pkt):
 	    # invalid mgmt packet length?
 	if len(pkt)!=MGMT_PKT_LENGTH:
@@ -1369,7 +1380,7 @@ class llsr_mac(gr.basic_block):
 	      self.message= [1,0]
 	else:
 	# wrong id
-	   self.message= [1,1]  	
+	   self.message= [1,1]
         # return result
         return self.message
 
@@ -1386,7 +1397,7 @@ class llsr_mac(gr.basic_block):
 	    data=pmt.cdr(msg)
 	except:
 	    if self.debug_stderr:
-		sys.stderr.write("%d: in _mgmt_resp_rx(): MGMT RESP message is not a PDU \n" % self.addr) 		    
+		sys.stderr.write("%d: in _mgmt_resp_rx(): MGMT RESP message is not a PDU \n" % self.addr)
 	    return
 	if pmt.is_u8vector(data):
 	    data=pmt.u8vector_elements(data)
@@ -1402,7 +1413,7 @@ class llsr_mac(gr.basic_block):
     #---------------------
     # mgmt resp dispatch
     #---------------------
-    def dispatch_mgmt_resp_rx(self, data, meta_dict): 
+    def dispatch_mgmt_resp_rx(self, data, meta_dict):
         if self.mgmt_resp_queue.qsize()>=self.max_queue_size:
            self.mgmt_resp_queue.get()
         self.mgmt_resp_queue.put((data, meta_dict))
@@ -1414,7 +1425,7 @@ class llsr_mac(gr.basic_block):
     def mgmt_resp_tx(self, pdu_tuple):
 	if len(self.nodes)>0:
 	   self.send_mgmt_resp_pkt(pdu_tuple, self.pkt_cnt)
-	   self.pkt_cnt=(self.pkt_cnt+1) % 256	
+	   self.pkt_cnt=(self.pkt_cnt+1) % 256
 
     #--------------------------------------------
     # transmit a management resp packet
@@ -1425,21 +1436,21 @@ class llsr_mac(gr.basic_block):
 
     #--------------------------------------------
     # send a mgmt resp packet
-    #-------------------------------------------- 
-    def send_mgmt_resp_pkt(self, pdu_tuple, pkt_cnt): 
+    #--------------------------------------------
+    def send_mgmt_resp_pkt(self, pdu_tuple, pkt_cnt):
         # connected to sink?
         if self.pq==0:
             # no! drop the packet
-            if self.debug_stderr: 
+            if self.debug_stderr:
                 sys.stderr.write("%d:in send_mgmt_resp_radio(): packet dropped (not connected)\n" %
-                    self.addr) 
-            return  
+                    self.addr)
+            return
         # packet to self?
         if self.addr==self.next_hop:
             # no! drop the packet
-            if self.debug_stderr: 
-                sys.stderr.write("%d:in send_mgmt_resp_radio(): packet dropped (packet to self)\n" % self.addr) 
-            return  
+            if self.debug_stderr:
+                sys.stderr.write("%d:in send_mgmt_resp_radio(): packet dropped (packet to self)\n" % self.addr)
+            return
         # yes! data packet header structure
         data = [MGMT_RESP_PROTO, self.addr, self.next_hop, pkt_cnt]
         # add payload
@@ -1494,15 +1505,15 @@ class llsr_mac(gr.basic_block):
         data=[mgmtflag, self.addr, mgmt_track, message]
         return self.pdupacker(data)
 
-    # ---------------------------------------   
-    # Utility Functions 
+    # ---------------------------------------
+    # Utility Functions
     # ---------------------------------------
 
     #--------------------------
     # Hash
     #--------------------------
 
-    #-------add hash-----------	
+    #-------add hash-----------
     def addhash(self, data, key):
 	#convert list to full string
 	hashstr=" ".join(str(i) for i in data)
@@ -1526,7 +1537,7 @@ class llsr_mac(gr.basic_block):
     def pdupacker(self, data):
 	pdu = pmt.cons( \
         pmt.to_pmt({}), \
-        pmt.init_u8vector(len(data), data))		
+        pmt.init_u8vector(len(data), data))
         return pdu
 
     # -------------------------
@@ -1550,4 +1561,3 @@ class llsr_mac(gr.basic_block):
 	timestr=map(int,temp)
 	final=struct.pack('>HBBBBBB', *timestr)
 	return final
-	
