@@ -1,0 +1,120 @@
+LLSR-MIB DEFINITIONS ::= BEGIN
+
+--
+-- Imports
+--
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, Unsigned32  FROM SNMPv2-SMI
+    netSnmpPlaypen                            FROM NET-SNMP-MIB
+    DisplayString, DateAndTime     	      FROM SNMPv2-TC
+;
+
+--
+-- Mib definition
+--
+
+llsr MODULE-IDENTITY
+    LAST-UPDATED "201609210000Z" -- Sep 21th 00:00 ETC
+    ORGANIZATION "scs.carleton.ca"
+    CONTACT-INFO    
+          "email:    wenqianwang@scs.carleton.ca"
+    DESCRIPTION
+	"Remote Monitoring MIB for Underwater Acoustic Sensor Networks"
+    REVISION     "201609210000Z"-- Second revision
+    DESCRIPTION
+	"First draft"
+    ::= { netSnmpPlaypen 1 }
+
+nodeStatsTable OBJECT-TYPE
+	SYNTAX SEQUENCE OF NodeStatsEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION
+		"The table for putting nodestatus"
+	::= { llsr 1}
+
+nodeStatsEntry OBJECT-TYPE
+	SYNTAX NodeStatsEntry
+	MAX-ACCESS not-accessible
+	STATUS current
+	DESCRIPTION
+		"A collection of node statistics kept for a node"
+	INDEX { index }
+	::={ nodeStatsTable 1 }
+
+NodeStatsEntry ::= SEQUENCE {
+	index		Unsigned32,
+	nodeAddr	Unsigned32,
+	maxAttempts	Unsigned32,
+	broadcastInterval  Unsigned32, 
+	mgmtMode	Unsigned32,
+	lastUpdated	OCTET STRING,
+	lastUpdatedTime	DateAndTime,
+	mgmtInfo 	Unsigned32
+	}
+
+index OBJECT-TYPE
+      SYNTAX Unsigned32
+      MAX-ACCESS	not-accessible
+      STATUS		current
+      DESCRIPTION
+		"index"
+      ::={ nodeStatsEntry 1 }
+
+nodeAddr OBJECT-TYPE
+	SYNTAX	Unsigned32(0..255)
+	MAX-ACCESS	read-only
+	STATUS	current
+	DESCRIPTION
+		"The node address"
+	::= { nodeStatsEntry 2 }
+
+maxAttempts OBJECT-TYPE
+	SYNTAX	Unsigned32
+	MAX-ACCESS	read-write
+	STATUS	current
+	DESCRIPTION
+		"The max retry"
+	::= { nodeStatsEntry 3 }
+
+broadcastInterval OBJECT-TYPE
+	SYNTAX Unsigned32
+	MAX-ACCESS    read-write
+	STATUS current
+	DESCRIPTION
+		"broadcast interval"
+	::={ nodeStatsEntry 4}
+
+mgmtMode OBJECT-TYPE
+	SYNTAX Unsigned32
+	MAX-ACCESS     read-write
+	STATUS current
+	DESCRIPTION
+		"MgmtMode, 0->Manual, 1->Bio"
+	::={ nodeStatsEntry 5}
+
+lastUpdated OBJECT-TYPE
+	SYNTAX OCTET STRING
+	MAX-ACCESS     read-only
+	STATUS current
+	DESCRIPTION
+		"lastupdated item"
+	::={ nodeStatsEntry 6 }
+
+lastUpdatedTime OBJECT-TYPE
+	SYNTAX DateAndTime
+	MAX-ACCESS     read-only
+	STATUS current
+	DESCRIPTION
+		"lastupdated time UTC format"
+	::={ nodeStatsEntry 7}
+
+mgmtInfo OBJECT-TYPE
+	SYNTAX Unsigned32
+	MAX-ACCESS read-only
+	STATUS current
+	DESCRIPTION
+		"RowStatus, 0->nodealive, 1->requestsent, 2->itemupdated, 3->mgmtError, 4->nodedead"
+	::={ nodeStatsEntry 8}
+END
