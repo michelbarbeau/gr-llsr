@@ -170,21 +170,23 @@ class maintainTableThread(threading.Thread):
         print "Table Status Fetching FUNC Start"
         while True:
             time.sleep(1)
-            tableSize = EntryObject().getTableSize()
-            # print ("threading runing table size: %d" % tableSize)
-            # print ("%s : " % (timeStampPrint()))
-            if tableSize > self.startIdx:
-                self.updateTable(self.startIdx,
-                                 tableSize,
-                                 self.columnObjects,
-                                 self.mibBuilder,
-                                 self.MibScalarInstance)
-                self.startIdx = tableSize
-                print ("%s : Table Size: %d\n" % (timeStampPrint(), tableSize))
-                print "====================\n"
-                self.printTable()
-            elif tableSize == self.startIdx:
-                self.printTable()
+            try:
+                tableSize = EntryObject().getTableSize()
+                # print ("threading runing table size: %d" % tableSize)
+                # print ("%s : " % (timeStampPrint()))
+                if tableSize > self.startIdx:
+                    self.updateTable(self.startIdx,
+                                     tableSize,
+                                     self.columnObjects,
+                                     self.mibBuilder,
+                                     self.MibScalarInstance)
+                    self.startIdx = tableSize
+                    print ("%s : Table Size: %d\n" % (timeStampPrint(),
+                                                      tableSize))
+                    print "====================\n"
+                    self.printTable()
+                elif tableSize == self.startIdx:
+                    self.printTable()
 
     def updateTable(self, startIdx, tableSize, columnObjects,
                     mibBuilder, MibScalarInstance):
