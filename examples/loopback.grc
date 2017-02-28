@@ -458,7 +458,7 @@
     </param>
     <param>
       <key>data_to_file</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>debug_info</key>
@@ -470,7 +470,7 @@
     </param>
     <param>
       <key>errors_to_file</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>_coordinate</key>
