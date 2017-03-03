@@ -772,7 +772,7 @@ class llsr_mac(gr.basic_block):
             if self.debug_stderr:
                 self.debugPrinting(0, 0, "Node {0}: in_radio_rx(): "
                                    "invalid protocol ID: {1}\n",
-                                   self.addr, data[PKT_PROTO_ID])
+                                   self.addr, data[PKT_PROT_ID])
         # valid packet length?
         if ((data[PKT_PROT_ID] == ARQ_PROTO and len(data) != ACK_PKT_LENGTH)
             or (data[PKT_PROT_ID] == DATA_PROTO and len(data) < PKT_MIN)
