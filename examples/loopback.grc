@@ -378,7 +378,7 @@
       <value>False</value>
     </param>
     <param>
-      <key>debug_info</key>
+      <key>debug_level</key>
       <value>0</value>
     </param>
     <param>
@@ -458,10 +458,10 @@
     </param>
     <param>
       <key>data_to_file</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
-      <key>debug_info</key>
+      <key>debug_level</key>
       <value>0</value>
     </param>
     <param>
@@ -470,7 +470,7 @@
     </param>
     <param>
       <key>errors_to_file</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>

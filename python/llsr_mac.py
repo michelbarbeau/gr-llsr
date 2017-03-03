@@ -270,7 +270,7 @@ class llsr_mac(gr.basic_block):
                  max_queue_size=10,
                  errors_to_file=False,
                  data_to_file=False,
-                 debug_info=0):
+                 debug_level=0):
         gr.basic_block.__init__(self,
                                 name="llsr_mac",
                                 in_sig=None,
@@ -354,7 +354,7 @@ class llsr_mac(gr.basic_block):
         # beacon broadcast period
         self.broadcast_interval = broadcast_interval
         # debug information
-        self.debug_info = debug_info
+        self.debug_level = debug_level
         # MGMTMODE
         self.mgmtMode = 0
         # SNMP mgmt table for sink
@@ -407,6 +407,9 @@ class llsr_mac(gr.basic_block):
     # ------------------------------------------
     # debug info print out
     # ------------------------------------------
+    # outputtype means we want to output as stderr or stdout
+    # debugtype means we want this msg to print out or not according to
+    # debug_level
     def debugPrinting(self, debugtype, outputype, debugmsg, *args):
         output = None
         if args:
@@ -415,17 +418,21 @@ class llsr_mac(gr.basic_block):
             output = debugmsg
         if output is not None:
             # infotype 1 is essential
-            if self.debug_info == 0:
-                if debugtype == 0:
+            if self.debug_level == 0:
+                if outputype == 0:
                     sys.stderr.write(output)
                     sys.stderr.flush()
-                if debugtype == 1:
+                if outputype == 1:
                     sys.stdout.write(output)
                     sys.stdout.flush()
-            if self.debug_info == 1 and outputype == 1:
-                return
-        else:
-            return
+            if self.debug_level == 1 and debugtype == 1:
+                if outputype == 0:
+                    sys.stderr.write(output)
+                    sys.stderr.flush()
+                if outputype == 1:
+                    sys.stdout.write(output)
+                    sys.stdout.flush()
+        return
 
     def get_rx_byte_count(self):
         return self.rx_byte_count
@@ -474,7 +481,7 @@ class llsr_mac(gr.basic_block):
             self.next_hop = UNDEF_ADDR
         if self.debug_stderr:
             # log the packet
-            self.debugPrinting(1, 0, "Node {0}: in SelectNextHop(): "
+            self.debugPrinting(0, 0, "Node {0}: in SelectNextHop(): "
                                "HC: {1}, PQ: {2}, NEXT HOP: {3}\n",
                                self.addr, self.hc, self.pq, self.next_hop)
 
@@ -491,7 +498,7 @@ class llsr_mac(gr.basic_block):
                                self.addr, len(pkt))
             return
         # no!
-        self.debugPrinting(1, 0, "PROT ID: {0} SRC: {1} HC: {2} PQ: {3}\n",
+        self.debugPrinting(0, 0, "PROT ID: {0} SRC: {1} HC: {2} PQ: {3}\n",
                            pkt[PKT_PROT_ID],
                            pkt[PKT_SRC],
                            pkt[PKT_HC],
