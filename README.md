@@ -3,9 +3,9 @@
 The module implements the protocol originally described in:
 Michel Barbeau, Stephane Blouin, Gimer Cervera, Joaquin Garcia-Alfaro
 and Evangelos Kranakis, "Location-free Link State Routing for Underwater
-Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on 
-Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS, 
-Canada. 
+Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on
+Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS,
+Canada.
 
 The project includes the following contributions (see gr-llsr/docs):
 
@@ -13,10 +13,10 @@ Zach Renaud, "Network Management for Software Defined Radio Applications", Bache
 
 Wenqian Wang, "Performance Management of Hydroacoustic Surveillance Networks", Master of Computer Science, Graduate Project, School of Computer Science, Carleton University, May 2016.
 
-# Copyright 2016 Michel Barbeau, Wenqian Wang, Carleton University.
-# Version: Feb 9, 2017
+# Copyright 2016 Michel Barbeau, Zach Renaud and Wenqian Wang, Carleton University.
+# Version: March 3, 2017
 
-## Installing 
+## Installing
 
 `git clone https://github.com/michelbarbeau/gr-llsr`
 
@@ -28,7 +28,7 @@ cd gr-llsr
 
 mkdir build
 
-cd build 
+cd build
 
 cmake ../
 

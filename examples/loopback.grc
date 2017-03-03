@@ -378,7 +378,7 @@
       <value>False</value>
     </param>
     <param>
-      <key>debug_info</key>
+      <key>debug_level</key>
       <value>0</value>
     </param>
     <param>
@@ -461,7 +461,7 @@
       <value>True</value>
     </param>
     <param>
-      <key>debug_info</key>
+      <key>debug_level</key>
       <value>0</value>
     </param>
     <param>
