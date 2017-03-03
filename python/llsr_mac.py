@@ -5,7 +5,7 @@
 # Location-free Link State Routing (LLSR)
 # ---------------------------------------
 # Copyright 2016 Michel Barbeau, Wenqian Wang, Carleton University.
-# Version: Feb 21, 2017
+# Version: March 3, 2017
 #
 # This is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -898,7 +898,7 @@ class llsr_mac(gr.basic_block):
                     # yes! deliver upper layer protocol
                     self.output_user_data((data, meta_dict))
                     # add row if the PKT_SRC is not in the table
-                    self.MTB.addRow(self.createdefaultNewrow(data[PKT_SRC]))
+                    # self.MTB.addRow(self.createdefaultNewrow(data[PKT_SRC]))
                 # else, forward to next hop
                 else:
                     self._app_rx(self.pdupacker(data[PKT_MIN:]),
