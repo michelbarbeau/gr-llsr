@@ -14,7 +14,8 @@
       $node_expiry_delay,
       $max_queue_size,
       $errors_to_file,
-      $data_to_file)
+      $data_to_file,
+      $debug_level)
   </make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
@@ -41,8 +42,8 @@
   <param>
     <name>Broadcast interval</name>
     <key>broadcast_interval</key>
-    <value>2.0</value>
-    <type>real</type>
+    <value>2</value>
+    <type>int</type>
   </param>
   <param>
   <name>Backoff</name>
@@ -104,6 +105,21 @@
       <key>False</key>
     </option>
   </param>
+  <param>
+    <name>Debug Info</name>
+    <key>debug_level</key>
+    <value>0</value>
+    <type>enum</type>
+    <option>
+      <name>Detailed</name>
+      <key>0</key>
+    </option>
+    <option>
+      <name>Essential</name>
+      <key>1</key>
+    </option>
+  </param>
+
   <!-- Make one 'sink' node per input. Sub-nodes:
        * name (an identifier for the GUI)
        * type
@@ -124,11 +140,11 @@
     <type>message</type>
     <optional>1</optional>
   </sink>
-   <sink>
-    <name>from_mgmt_app</name>
-    <type>message</type>
-    <optional>1</optional>
-  </sink>
+<!--   <sink>-->
+<!--    <name>from_mgmt_app</name>-->
+<!--    <type>message</type>-->
+<!--    <optional>1</optional>-->
+<!--  </sink>-->
   <sink>
     <name>ctrl_in</name>
     <type>message</type>
@@ -150,18 +166,18 @@
     <type>message</type>
     <optional>1</optional>
   </source>
-  <source>
-    <name>to_mgmt_app</name>
-    <type>message</type>
-    <optional>1</optional>
-  </source>
+<!--  <source>-->
+<!--    <name>to_mgmt_app</name>-->
+<!--    <type>message</type>-->
+<!--    <optional>1</optional>-->
+<!--  </source>-->
   <source>
     <name>ctrl_out</name>
     <type>message</type>
   <optional>1</optional>
   </source>
   <doc>
-The module implements the Location-free Link State Routing (LLSR) protocol originally described in: Michel Barbeau, Stephane Blouin, Gimer Cervera, Joaquin Garcia-Alfaro and Evangelos Kranakis, "Location-free Link State Routing for Underwater Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS, Canada. 
+The module implements the Location-free Link State Routing (LLSR) protocol originally described in: Michel Barbeau, Stephane Blouin, Gimer Cervera, Joaquin Garcia-Alfaro and Evangelos Kranakis, "Location-free Link State Routing for Underwater Acoustic Sensor Networks," 8th annual IEEE Canadian Conference on Electrical and Computer Engineering (CCECE), May 2015, Halifax, NS, Canada.
   </doc>
 
 </block>

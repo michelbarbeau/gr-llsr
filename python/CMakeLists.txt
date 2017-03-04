@@ -33,6 +33,7 @@ GR_PYTHON_INSTALL(
     __init__.py
     llsr_mac.py
     constants.py
+    llsrHandler.py
     DESTINATION ${GR_PYTHON_DIR}/llsr
 )
 
