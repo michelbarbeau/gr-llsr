@@ -35,8 +35,8 @@ Wenqian Wang, "Performance Management of Hydroacoustic Surveillance Networks", M
 You need to install SNMP and some of the standard MIBs.
 
 ```
-sudo apt-get update
-sudo apt-get install snmp snmp-mibs-downloader
+  sudo apt-get update
+  sudo apt-get install snmp snmp-mibs-downloader
 ```
 
 Copy the MIB folder in LLSR_SNMP folder to following location:
@@ -92,7 +92,7 @@ Unless you setting up the files to be accessible under system control scope,
 
 you may need root permission execute the agent script by using command:
 
-`sudo python llsrSnmpAgent.py`
+` sudo python llsrSnmpAgent.py`
 
 
 ## More examples withe using this module
