@@ -42,6 +42,7 @@ sudo apt-get install snmp snmp-mibs-downloader
 Copy the MIB folder in LLSR_SNMP folder to following location:
 
 `~/.snmp/mibs`
+and
 `/usr/local/share/snmp/mibs`
 
 You may need to make sure port 161 is not occupied by your system.
