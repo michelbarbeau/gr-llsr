@@ -132,7 +132,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1064, 281)</value>
+      <value>(1096, 417)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -363,7 +363,7 @@
     </param>
     <param>
       <key>broadcast_interval</key>
-      <value>2.0</value>
+      <value>2</value>
     </param>
     <param>
       <key>comment</key>
@@ -376,6 +376,10 @@
     <param>
       <key>data_to_file</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>debug_level</key>
+      <value>0</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -442,7 +446,7 @@
     </param>
     <param>
       <key>broadcast_interval</key>
-      <value>2.0</value>
+      <value>2</value>
     </param>
     <param>
       <key>comment</key>
@@ -454,7 +458,11 @@
     </param>
     <param>
       <key>data_to_file</key>
-      <value>True</value>
+      <value>False</value>
+    </param>
+    <param>
+      <key>debug_level</key>
+      <value>0</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -466,7 +474,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(800, 51)</value>
+      <value>(792, 30)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -537,7 +545,7 @@
     <source_block_id>llsr_llsr_mac_1</source_block_id>
     <sink_block_id>blocks_message_debug_0</sink_block_id>
     <source_key>to_app</source_key>
-    <sink_key>print_pdu</sink_key>
+    <sink_key>print</sink_key>
   </connection>
   <connection>
     <source_block_id>llsr_llsr_mac_1</source_block_id>

@@ -1,9 +1,20 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 ##################################################
-# Gnuradio Python Flow Graph
+# GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Sun May  8 23:57:21 2016
+# Generated: Fri Mar  3 10:45:29 2017
 ##################################################
+
+if __name__ == '__main__':
+    import ctypes
+    import sys
+    if sys.platform.startswith('linux'):
+        try:
+            x11 = ctypes.cdll.LoadLibrary('libX11.so')
+            x11.XInitThreads()
+        except:
+            print "Warning: failed to XInitThreads()"
 
 from PyQt4 import Qt
 from gnuradio import blocks
@@ -16,7 +27,7 @@ import llsr
 import pmt
 import sys
 
-from distutils.version import StrictVersion
+
 class top_block(gr.top_block, Qt.QWidget):
 
     def __init__(self):
@@ -24,9 +35,9 @@ class top_block(gr.top_block, Qt.QWidget):
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Top Block")
         try:
-             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
+            self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
         except:
-             pass
+            pass
         self.top_scroll_layout = Qt.QVBoxLayout()
         self.setLayout(self.top_scroll_layout)
         self.top_scroll = Qt.QScrollArea()
@@ -42,12 +53,6 @@ class top_block(gr.top_block, Qt.QWidget):
         self.settings = Qt.QSettings("GNU Radio", "top_block")
         self.restoreGeometry(self.settings.value("geometry").toByteArray())
 
-
-        ##################################################
-        # Variables
-        ##################################################
-        self.samp_rate = samp_rate = 32000
-
         ##################################################
         # Blocks
         ##################################################
@@ -55,74 +60,72 @@ class top_block(gr.top_block, Qt.QWidget):
               0,
               0.01,
               5,
-              2.0,
+              2,
               True,
               0.05,
               10.0,
               10,
-              False,
-              True)
+              True,
+              True,
+              0)
           
         self.llsr_llsr_mac_0 = llsr.llsr_mac(
               1,
               0.01,
               5,
-              2.0,
+              2,
               True,
               0.05,
               10.0,
               10,
               False,
-              False)
+              False,
+              0)
           
         self.blocks_random_pdu_0 = blocks.random_pdu(5, 5, chr(0xFF), 2)
         self.blocks_message_strobe_3 = blocks.message_strobe(pmt.intern("TEST"), 1000)
         self.blocks_message_strobe_2 = blocks.message_strobe(pmt.intern("TEST"), 20000)
         self.blocks_message_strobe_0 = blocks.message_strobe(pmt.intern("TEST"), 10000)
+        self.blocks_message_debug_1 = blocks.message_debug()
         self.blocks_message_debug_0 = blocks.message_debug()
 
         ##################################################
-        # Asynch Message Connections
+        # Connections
         ##################################################
-        self.msg_connect(self.blocks_message_strobe_0, "strobe", self.llsr_llsr_mac_0, "ctrl_in")
-        self.msg_connect(self.blocks_message_strobe_2, "strobe", self.blocks_random_pdu_0, "generate")
-        self.msg_connect(self.blocks_message_strobe_3, "strobe", self.llsr_llsr_mac_1, "ctrl_in")
-        self.msg_connect(self.blocks_random_pdu_0, "pdus", self.llsr_llsr_mac_0, "from_app_arq")
-        self.msg_connect(self.llsr_llsr_mac_0, "to_radio", self.llsr_llsr_mac_1, "from_radio")
-        self.msg_connect(self.llsr_llsr_mac_1, "to_app", self.blocks_message_debug_0, "print_pdu")
-        self.msg_connect(self.llsr_llsr_mac_1, "to_radio", self.llsr_llsr_mac_0, "from_radio")
+        self.msg_connect((self.blocks_message_strobe_0, 'strobe'), (self.llsr_llsr_mac_0, 'ctrl_in'))    
+        self.msg_connect((self.blocks_message_strobe_2, 'strobe'), (self.blocks_random_pdu_0, 'generate'))    
+        self.msg_connect((self.blocks_message_strobe_3, 'strobe'), (self.llsr_llsr_mac_1, 'ctrl_in'))    
+        self.msg_connect((self.blocks_random_pdu_0, 'pdus'), (self.llsr_llsr_mac_0, 'from_app_arq'))    
+        self.msg_connect((self.llsr_llsr_mac_0, 'to_app'), (self.blocks_message_debug_1, 'print_pdu'))    
+        self.msg_connect((self.llsr_llsr_mac_0, 'to_radio'), (self.llsr_llsr_mac_1, 'from_radio'))    
+        self.msg_connect((self.llsr_llsr_mac_1, 'to_app'), (self.blocks_message_debug_0, 'print'))    
+        self.msg_connect((self.llsr_llsr_mac_1, 'to_radio'), (self.llsr_llsr_mac_0, 'from_radio'))    
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "top_block")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
 
-    def get_samp_rate(self):
-        return self.samp_rate
 
-    def set_samp_rate(self, samp_rate):
-        self.samp_rate = samp_rate
 
-if __name__ == '__main__':
-    import ctypes
-    import sys
-    if sys.platform.startswith('linux'):
-        try:
-            x11 = ctypes.cdll.LoadLibrary('libX11.so')
-            x11.XInitThreads()
-        except:
-            print "Warning: failed to XInitThreads()"
-    parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
-    (options, args) = parser.parse_args()
-    if(StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0")):
-        Qt.QApplication.setGraphicsSystem(gr.prefs().get_string('qtgui','style','raster'))
+def main(top_block_cls=top_block, options=None):
+
+    from distutils.version import StrictVersion
+    if StrictVersion(Qt.qVersion()) >= StrictVersion("4.5.0"):
+        style = gr.prefs().get_string('qtgui', 'style', 'raster')
+        Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
-    tb = top_block()
+
+    tb = top_block_cls()
     tb.start()
     tb.show()
+
     def quitting():
         tb.stop()
         tb.wait()
     qapp.connect(qapp, Qt.SIGNAL("aboutToQuit()"), quitting)
     qapp.exec_()
-    tb = None #to clean up Qt widgets
+
+
+if __name__ == '__main__':
+    main()
