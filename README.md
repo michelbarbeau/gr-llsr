@@ -46,6 +46,7 @@ and
 `/usr/local/share/snmp/mibs`
 
 You may need to make sure port 161 is not occupied by your system.
+
 This usually is caused by your running SNMP Daemon.
 
 ## Building
