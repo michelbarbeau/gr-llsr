@@ -98,7 +98,3 @@ you may need root permission execute the agent script by using command:
 ## More examples withe using this module
 
 see: https://github.com/michelbarbeau/gr-splash
-
-## Bug Report
-
-Please mail to wenqianwang@scs.carleton.ca
