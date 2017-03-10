@@ -1663,12 +1663,12 @@ class llsr_mac(gr.basic_block):
                                "length is {1}\n", self.addr, len(pkt))
             return
         # no!
-        self.debugPrinting("PROT ID: {0} MGMT RESP PKT FROM: {1} "
+        self.debugPrinting(0, 0, "PROT ID: {0} MGMT RESP PKT FROM: {1} "
                            "MGMT RESP PKT TO: {2} MGMT RESP PKT CNT: {3} "
                            "MGMT  RESP FLAG: {4} MGMT RESP SRC: {5} "
                            "MGMT RESP TRACK: {6} MGMT RESP VALUE {7}"
-                           "MGMT RESP HASH: {8}\n", pkt[PKT_PROT_ID],
-                           pkt[PKT_SRC], pkt[PKRT_DEST], pkt[PKT_CNT],
+                           "MGMT RESP HASH: {8} \n", pkt[PKT_PROT_ID],
+                           pkt[PKT_SRC], pkt[PKT_DEST], pkt[PKT_CNT],
                            pkt[MGMT_RESP_FLAG], pkt[MGMT_RESP_SRC],
                            pkt[MGMT_RESP_TRACK], pkt[MGMT_RESP_VAL],
                            pkt[MGMT_RESP_HASH])
